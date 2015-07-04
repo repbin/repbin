@@ -16,7 +16,11 @@ func TestGenPostHandler(t *testing.T) {
 	privKey, _ := hex.DecodeString("20a2633e422090a4f4a102f8e3d112f2b4378dbd9957e8c892067fc09239d36c39d8913ab046428e409cf1fa7cee6f63c1f6bf701356a44a8c8c2559bdb2526f")
 
 	log.SetMinLevel(log.LevelDebug)
-	ms, err := New(path.Join(os.TempDir(), "repbin")+string(os.PathSeparator), pubKey, privKey)
+	testDir := path.Join(os.TempDir(), "repbin")
+	if err := os.MkdirAll(testDir, 0700); err != nil {
+		t.Fatal(err)
+	}
+	ms, err := New(testDir+string(os.PathSeparator), pubKey, privKey)
 	if err != nil {
 		t.Fatalf("New: %s", err)
 	}
