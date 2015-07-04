@@ -1,12 +1,13 @@
 package messagestore
 
 import (
+	"time"
+
 	"github.com/agl/ed25519"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"time"
 )
 
 // TouchPeer creates a peer entry if it does not exist yet

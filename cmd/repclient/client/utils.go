@@ -3,15 +3,16 @@ package client
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/crypto/ssh/terminal"
 	"io/ioutil"
 	"os"
 	"os/user"
 	"path"
-	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/utils"
 	"strconv"
 	"strings"
+
+	log "github.com/repbin/repbin/deferconsole"
+	"github.com/repbin/repbin/utils"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 // selectPrivKey returns the selected private key as string.

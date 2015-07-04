@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
 	"github.com/repbin/repbin/cmd/repclient/client"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/hashcash"

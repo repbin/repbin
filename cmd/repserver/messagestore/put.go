@@ -1,12 +1,13 @@
 package messagestore
 
 import (
+	"time"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"time"
 )
 
 // MessageExists returns true if the message exists

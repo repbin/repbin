@@ -2,9 +2,10 @@ package listparse
 
 import (
 	"bytes"
-	"github.com/repbin/repbin/utils/repproto/structs"
 	"errors"
 	"io"
+
+	"github.com/repbin/repbin/utils/repproto/structs"
 )
 
 var (

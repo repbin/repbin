@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	log "github.com/repbin/repbin/deferconsole"
 	"time"
+
+	log "github.com/repbin/repbin/deferconsole"
 )
 
 // FetchRun is called when it is time to update peer information and load messages

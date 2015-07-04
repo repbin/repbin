@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"strconv"
 )
 
 func deferVerify(d []byte) (*message.Curve25519Key, *[message.MessageIDSize]byte, error) {

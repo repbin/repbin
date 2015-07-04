@@ -4,16 +4,17 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
-	"github.com/agl/ed25519"
 	"math"
 	"math/big"
 	"net/http"
+	"time"
+
+	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/cmd/repserver/messagestore"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyauth"
-	"time"
 )
 
 // Version of this release

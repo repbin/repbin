@@ -1,9 +1,10 @@
 package message
 
 import (
-	"github.com/repbin/repbin/hashcash"
 	"errors"
+
 	"github.com/agl/ed25519"
+	"github.com/repbin/repbin/hashcash"
 )
 
 var (

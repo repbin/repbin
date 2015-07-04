@@ -3,8 +3,9 @@ package message
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	log "github.com/repbin/repbin/deferconsole"
 	"io"
+
+	log "github.com/repbin/repbin/deferconsole"
 )
 
 // GenPadKey generates a random value suitable for the padding generator

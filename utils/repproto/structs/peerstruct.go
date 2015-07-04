@@ -2,9 +2,10 @@ package structs
 
 import (
 	"bytes"
+	"strconv"
+
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyproof"
-	"strconv"
 )
 
 const (

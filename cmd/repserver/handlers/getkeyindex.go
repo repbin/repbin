@@ -3,14 +3,15 @@ package handlers
 import (
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyauth"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // GetKeyIndex returns the index for a key

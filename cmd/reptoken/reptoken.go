@@ -3,13 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/agl/ed25519"
 	"os"
+	"strconv"
+	"time"
+
+	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/hashcash"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
-	"strconv"
-	"time"
 )
 
 var minbits = flag.Int("minBits", 24, "Generate token of minBits value")

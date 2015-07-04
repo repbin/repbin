@@ -1,8 +1,9 @@
 package structs
 
 import (
-	"github.com/repbin/repbin/message"
 	"testing"
+
+	"github.com/repbin/repbin/message"
 )
 
 func TestMessageStructToBytes(t *testing.T) {

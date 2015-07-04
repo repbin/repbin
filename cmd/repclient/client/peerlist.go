@@ -2,9 +2,10 @@ package client
 
 import (
 	"math/rand"
+	"time"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/utils/repproto"
-	"time"
 )
 
 // CmdPeerList fetches the peerlist and returns a new configfile

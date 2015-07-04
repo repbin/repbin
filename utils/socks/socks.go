@@ -3,12 +3,13 @@ package socks
 import (
 	"bytes"
 	"errors"
-	"golang.org/x/net/proxy"
 	"io"
 	"net/http"
 	urlPackage "net/url"
-	"github.com/repbin/repbin/utils"
 	"time"
+
+	"github.com/repbin/repbin/utils"
+	"golang.org/x/net/proxy"
 )
 
 // AcceptNoSocks allows workaround if no socks proxy is given

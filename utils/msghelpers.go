@@ -6,9 +6,10 @@ import (
 	"encoding/binary"
 	"errors"
 	"math/big"
-	"github.com/repbin/repbin/message"
 	"strings"
 	"time"
+
+	"github.com/repbin/repbin/message"
 )
 
 var (

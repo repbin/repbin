@@ -2,9 +2,10 @@ package keyproof
 
 import (
 	"crypto/rand"
-	"github.com/agl/ed25519"
 	"testing"
 	"time"
+
+	"github.com/agl/ed25519"
 )
 
 func TestSignProof(t *testing.T) {

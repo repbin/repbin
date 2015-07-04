@@ -4,8 +4,9 @@ package keyauth
 import (
 	"crypto/sha256"
 	"encoding/binary"
-	"golang.org/x/crypto/curve25519"
 	"time"
+
+	"golang.org/x/crypto/curve25519"
 )
 
 // Version of this release

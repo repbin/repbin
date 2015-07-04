@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
+	"time"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/repproto"
-	"strconv"
-	"time"
 )
 
 // CmdSTM does an STM run to specific server and from specific stmdir

@@ -2,9 +2,10 @@ package structs
 
 import (
 	"bytes"
+	"strconv"
+
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
-	"strconv"
 )
 
 // Version of this release
