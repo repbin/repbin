@@ -119,6 +119,9 @@ service!
 
 ## Further documentation
 
+[![GoDoc](https://godoc.org/github.com/repbin/repbin?status.png)]
+(http://godoc.org/github.com/repbin/repbin)
+
 - How to use the client: [USAGE.md](https://github.com/repbin/repbin/blob/master/USAGE.md)
 - How to use reptoken: [doc/REPTOKEN.md](https://github.com/repbin/repbin/blob/master/doc/REPTOKEN.md)
 - How to compile: [doc/COMPILE.md](https://github.com/repbin/repbin/blob/master/doc/COMPILE.md)
