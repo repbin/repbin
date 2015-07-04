@@ -84,7 +84,10 @@ func TestIDSpecific(t *testing.T) {
 	pk = utils.B58decode("FpYAGsxrpmgh8CUJkFEnz1CCY9ZUhbVxtTekfkFyWxdQ")
 	copy(privKey[:], pk[:])
 	pubKey = *message.GenPubKey(&privKey)
-	t.Skip() // TODO: enable test with local server
+	// long test with local server
+	if testing.Short() {
+		t.Skip("test skipped in -short run")
+	}
 	proto := New("", "http://127.0.0.1:8080")
 	info, err := proto.Auth("http://127.0.0.1:8080", privKey[:])
 	if err != nil {
