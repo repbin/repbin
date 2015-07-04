@@ -1,5 +1,7 @@
 # Repbin: Replicated Encrypted Paste Bin
 
+[![Build Status](https://travis-ci.org/repbin/repbin.png)](https://travis-ci.org/repbin/repbin)
+
 Repbin is an encrypted pastebin for the command line that runs over Tor!
 Repbin servers form a distributed network where nodes sync posts with each other
 (like in Usenet or BBS/Fido systems). This makes Repbin resilient and scalable.
