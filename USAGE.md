@@ -21,7 +21,8 @@ To fetch the file from the server, simply enter
 
 	repclient -out OTHERFILE  http://bvuk3xmvslx3idcj.onion/3x77hJtt42MkGbs18e1ZvBw9oAftAUrr9K9x4E8rQzed_2PGBikD5hEcXh7kT4vtKPsZuwymWMeBNeGiRpQ24upB3
 
-Keep in mind to use your own pastebin address. The example address shown will not work. You will know have the content of the paste in file "OTHERFILE".
+Keep in mind to use your own pastebin address. The example address shown will
+not work. You will know have the content of the paste in file `OTHERFILE`.
 
 An even easier way accomplish the same task is to use pipes.
 Post:
@@ -36,7 +37,7 @@ The last command will display the contents of the paste on the standard output.
 
 ### Custom paste server
 
-You can use a non-default server by adding the "--server URL" option to the commandline. The URL is an onion URL that needs to point to a repbin server. For example:
+You can use a non-default server by adding the `--server URL` option to the commandline. The URL is an onion URL that needs to point to a repbin server. For example:
 
 	cat FILE | repclient --server http://bvuk3xmvslx3idcj.onion/
 
@@ -47,16 +48,21 @@ To simplify use, speed up post/fetch, and to allow many servers, create a config
 
 	repclient --peerlist
 
-You can edit ~/.config/repclient/repclient.config to change the address of your Tor client, or set up
-a keydir. You should from time to time call "repclient --peerlist" again so that your paste-servers stay current.
+You can edit `~/.config/repclient/repclient.config` to change the address of
+your Tor client, or set up a keydir. You should from time to time call
+`repclient --peerlist` again so that your paste-servers stay current.
 
 ### Keydir
 
-Most of the time spent when pasting is used on creating hashcash tokens. Change the "KeyDir" option in your new configuration file to point to a new empty directory.  Now start a token generator to fill it with data:
+Most of the time spent when pasting is used on creating hashcash tokens. Change
+the "KeyDir" option in your new configuration file to point to a new empty
+directory. Now start a token generator to fill it with data:
 
 	reptoken --outDir KeyDir
 
-You computer will now start producing hashcash tokens. Whenever you want to post, the repclient will try to find a usable token in your KeyDir and use that. Considerable speedup!
+You computer will now start producing hashcash tokens. Whenever you want to
+post, the repclient will try to find a usable token in your KeyDir and use that.
+Considerable speedup!
 
 
 ## Advanced/expert usage
@@ -124,7 +130,7 @@ this:
 	0		    G9MuGQ1wYCXag52BeRjVjQuZHfbqcoe7o9FDwpTC9YJ9
 	------------------------------------------------------------
 
-You can either download all messages by adding the "--outdir DIR" option, or you
+You can either download all messages by adding the `--outdir DIR` option, or you
 can manually fetch them
 
 
@@ -147,8 +153,8 @@ Last but not least...
 ### Repost
 	
 There exist repost servers that allow you to anonymize a message by sending the
-message to the repost server and that server will repost it to the public.  We
-will only hint at their usage here:
+message to the repost server and that server will repost it to the public.
+We will only hint at their usage here:
 
 	repclient --encrypt --repost --appdata -minDelay=1200 -maxDelay=7200 | repclient --encrypt --messageType=3 --recipientPubKey <repost server public key>
 

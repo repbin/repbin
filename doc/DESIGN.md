@@ -2,7 +2,7 @@
 
 To limit posting and retaining of messages the repserver requires each message
 to contain a hashcash-like proof of work. Contrary to the standard hashcash
-scheme, the scheme used by repbin allows the pre- calculation and reuse of
+scheme, the scheme used by repbin allows the pre-calculation and reuse of
 proofs.  With repbin, the sending party generates a new ed25519 keypair and
 calculates the hash collision for the public key. It then uses the public key to
 signs the complete message with the ed25519 and attaches the hashcash nonce. The
@@ -11,7 +11,7 @@ ed25519 key and calculates limits accordingly. The client can continue with the
 hashcollision after the key was used first, potentially adding more collision
 bits and thus more resources of the server. The client can also pre-calculate
 ed25519 keys and the respective hash collision to speed up operation in case of
-post. For privacy reasons, a client SHOULD use fresh ed25519/hashcash keys for
+post. For privacy reasons, a client **should** use fresh ed25519/hashcash keys for
 each post. This is the default behavior of the client.
 
 
@@ -159,5 +159,5 @@ For a repost message, the Data section looks like this:
 ```
 
 Key generation and all cryptographic operations can be observed by calling the
-client with the --KEYVERB parameter. This will print the private and temporary
+client with the `--KEYVERB` parameter. This will print the private and temporary
 keys to stderr.
