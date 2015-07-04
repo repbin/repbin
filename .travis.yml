@@ -1,4 +1,2 @@
 language: go
-
-before_install:
-  - sudo apt-get install -y tor
+script: go test -v -short ./...
