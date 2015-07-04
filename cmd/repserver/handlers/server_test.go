@@ -41,5 +41,6 @@ func TestGenPostHandler(t *testing.T) {
 	http.HandleFunc("/delete", ms.Delete)
 	go http.ListenAndServe(":8080", nil)
 	time.Sleep(time.Second / 100)
-	time.Sleep(time.Second * 10)
+	// TODO: only necessary for skipped test in getpost_test.go
+	// time.Sleep(time.Second * 10)
 }
