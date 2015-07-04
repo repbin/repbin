@@ -4,8 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"github.com/agl/ed25519"
 	"io/ioutil"
+
+	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/cmd/repserver/handlers"
 	"github.com/repbin/repbin/utils"
 )

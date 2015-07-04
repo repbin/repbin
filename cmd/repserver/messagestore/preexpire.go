@@ -1,10 +1,11 @@
 package messagestore
 
 import (
+	"time"
+
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"time"
 )
 
 // PreExpire expires a message in the next expire run

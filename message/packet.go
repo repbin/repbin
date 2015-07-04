@@ -39,11 +39,12 @@ import (
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/sha256"
-	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/hashcash"
 	"encoding/binary"
 	"errors"
+
 	"github.com/agl/ed25519"
+	log "github.com/repbin/repbin/deferconsole"
+	"github.com/repbin/repbin/hashcash"
 )
 
 var (

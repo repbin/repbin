@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/agl/ed25519"
 	"io/ioutil"
 	"math/rand"
+	"sync"
+	"time"
+
+	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/cmd/repserver/messagestore"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
@@ -12,8 +15,6 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"sync"
-	"time"
 )
 
 const (

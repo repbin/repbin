@@ -2,8 +2,9 @@ package message
 
 import (
 	"bytes"
-	log "github.com/repbin/repbin/deferconsole"
 	"testing"
+
+	log "github.com/repbin/repbin/deferconsole"
 )
 
 func TestEncryptDecryptAll(t *testing.T) {

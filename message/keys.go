@@ -32,9 +32,10 @@ import (
 	"crypto/sha256"
 	"crypto/sha512"
 	"errors"
-	"golang.org/x/crypto/curve25519"
 	"io"
+
 	log "github.com/repbin/repbin/deferconsole"
+	"golang.org/x/crypto/curve25519"
 )
 
 var (

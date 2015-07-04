@@ -5,8 +5,9 @@ import (
 	"math/big"
 	"net/http"
 	"os"
-	log "github.com/repbin/repbin/deferconsole"
 	"strconv"
+
+	log "github.com/repbin/repbin/deferconsole"
 )
 
 // RunServer starts the HTTP handlers

@@ -2,10 +2,11 @@ package structs
 
 import (
 	"bytes"
+	"strconv"
+
 	"github.com/repbin/repbin/hashcash"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
-	"strconv"
 )
 
 const (

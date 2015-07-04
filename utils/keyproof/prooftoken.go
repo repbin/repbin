@@ -6,6 +6,7 @@ package keyproof
 
 import (
 	"encoding/binary"
+
 	"github.com/agl/ed25519"
 )
 

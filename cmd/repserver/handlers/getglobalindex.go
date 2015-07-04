@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyproof"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // GetGlobalIndex returns the global index

@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
+
 	"github.com/repbin/repbin/cmd/repserver/handlers"
 	"github.com/repbin/repbin/cmd/repserver/messagestore"
 	log "github.com/repbin/repbin/deferconsole"
@@ -15,7 +17,6 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto"
 	"github.com/repbin/repbin/utils/repproto/structs"
-	"runtime"
 )
 
 // Version of this release

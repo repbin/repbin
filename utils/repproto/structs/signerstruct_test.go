@@ -1,9 +1,10 @@
 package structs
 
 import (
+	"testing"
+
 	"github.com/repbin/repbin/hashcash"
 	"github.com/repbin/repbin/message"
-	"testing"
 )
 
 func TestSignerStructEncode(t *testing.T) {

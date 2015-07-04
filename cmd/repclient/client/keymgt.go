@@ -2,11 +2,12 @@ package client
 
 import (
 	"os"
+	"strconv"
+	"strings"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
-	"strconv"
-	"strings"
 )
 
 // KeyCallBack implements a callback function to request keys from file-descriptor

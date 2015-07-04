@@ -1,9 +1,10 @@
 package keyauth
 
 import (
-	"golang.org/x/crypto/curve25519"
 	"testing"
 	"time"
+
+	"golang.org/x/crypto/curve25519"
 )
 
 func TestGenTempKey(t *testing.T) {

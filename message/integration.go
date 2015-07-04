@@ -2,6 +2,7 @@ package message
 
 import (
 	"errors"
+
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/hashcash"
 )

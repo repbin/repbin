@@ -6,15 +6,16 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyauth"
 	"github.com/repbin/repbin/utils/listparse"
 	"github.com/repbin/repbin/utils/repproto/structs"
 	"github.com/repbin/repbin/utils/socks"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // Version of this release

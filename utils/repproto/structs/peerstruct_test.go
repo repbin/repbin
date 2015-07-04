@@ -1,8 +1,9 @@
 package structs
 
 import (
-	"github.com/repbin/repbin/utils/keyproof"
 	"testing"
+
+	"github.com/repbin/repbin/utils/keyproof"
 )
 
 func TestPeerStructEncode(t *testing.T) {
