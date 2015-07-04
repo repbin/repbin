@@ -85,18 +85,19 @@ func TestIDSpecific(t *testing.T) {
 	copy(privKey[:], pk[:])
 	pubKey = *message.GenPubKey(&privKey)
 	// long test with local server
-	if !testing.Short() {
-		proto := New("", "http://127.0.0.1:8080")
-		info, err := proto.Auth("http://127.0.0.1:8080", privKey[:])
-		if err != nil {
-			t.Fatalf("ID: %s", err)
-		}
-		_ = info
-		msgs, more, err := proto.ListSpecific("http://127.0.0.1:8080", pubKey[:], privKey[:], 0, 10)
-		if err != nil {
-			t.Fatalf("ListSpecific: %s", err)
-		}
-		// fmt.Printf("%+v\n", msgs)
-		_, _ = msgs, more
+	if testing.Short() {
+		t.Skip("test skipped in -short run")
 	}
+	proto := New("", "http://127.0.0.1:8080")
+	info, err := proto.Auth("http://127.0.0.1:8080", privKey[:])
+	if err != nil {
+		t.Fatalf("ID: %s", err)
+	}
+	_ = info
+	msgs, more, err := proto.ListSpecific("http://127.0.0.1:8080", pubKey[:], privKey[:], 0, 10)
+	if err != nil {
+		t.Fatalf("ListSpecific: %s", err)
+	}
+	// fmt.Printf("%+v\n", msgs)
+	_, _ = msgs, more
 }
