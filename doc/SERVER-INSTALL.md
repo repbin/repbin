@@ -9,7 +9,7 @@ a new user on the system.
 
 0. The server's filesystem must support symlinks and chtimes
 
-1. Install/Compile the binary, as described in COMPILE.txt
+1. Install/Compile the binary, as described in [doc/COMPILE.md](https://github.com/repbin/repbin/blob/master/doc/COMPILE.md)
 
 2. Configure Tor to point a hidden service to 127.0.0.1:Port (Port is the port
    number of the repserver). Make sure that you restart Tor to have it generate
@@ -34,7 +34,7 @@ a new user on the system.
 ```
 
 7. Edit the configuration file to change the storage path. Change the value of
-	 "StoragePath" to the absolute path of $STOREDIR. Make sure the value ends
+	 "StoragePath" to the absolute path of `$STOREDIR`. Make sure the value ends
 	 with a slash (/).
 
 8. If needed, change the SocksProxy entry to the URL of your Tor client.
@@ -68,11 +68,11 @@ a new user on the system.
     Put it into background manually or run it in a screen/tmux session.
 
 Client's need to use the onion address of your hidden service by either changing
-their config-files or specifying the --server commandline option.
+their config-files or specifying the `--server` commandline option.
 
 Please be aware that there is no locking utilised in repserver. Only one
 instance should be running at a time. Running multiple instances accessing the
-same $STORAGEDIR WILL lead to catastrophic results, including security
+same $STORAGEDIR **will** lead to catastrophic results, including security
 nightmares and dead cats.
 
 
@@ -81,8 +81,8 @@ nightmares and dead cats.
 To replicate posts from/to other servers, peering needs to be configured. This
 is a manual process and there will not be a peer discovery feature for repbin.
 
-After starting the repserver, $STOREDIR will contain a new file:
-$STOREDIR/peers.config. This file contains the information required to peer
+After starting the repserver, `$STOREDIR` will contain a new file:
+`$STOREDIR/peers.config`. This file contains the information required to peer
 with other servers. To add a peer, create a new JSON list entry (or change the
 example) so that:
 
@@ -97,19 +97,19 @@ becoming unavailable until a well-formatted file is reloaded again.
 ## Administration tasks
 
 repserver should clean up house itself, but it will leave some files forever.
-Please plan for enough space. Do NOT move the files or you will destroy the
+Please plan for enough space. Do **not** move the files or you will destroy the
 chtime of the files (unless you know how to use tar, touch, cp etc). The chtime
 is required for part of the housecleaning process. Changing it will lead to
 files that linger for too long.
 
 After repserver has received his first files and/or peered with other
-repservers, the $STOREDIR will contain a number of directories containing
+repservers, the `$STOREDIR` will contain a number of directories containing
 various files. These files are paged textfiles (every entry is of a defined
 length). Changing any of the files manually can lead to strange results,
 including making the system unusable or breaking limits and access limitations.
 Great care is required if manual changes are required.
 
-File that MIGHT required changes are in the peers directory. Every peer has his
+File that **might** required changes are in the peers directory. Every peer has his
 own file here that keeps track of peer status. If a peer is reset (by deleting
 his posts), the peer status needs to be reset as well. The easiest method is to
 find the peer and delete his status file. Other changes are simply dangerous.
@@ -118,7 +118,7 @@ find the peer and delete his status file. Other changes are simply dangerous.
 ## Security
 
 The software is likely insecure in some bad ways, including but not limited to
-giving access to files for reading, writing and changing.  It is highly
+giving access to files for reading, writing and changing. It is highly
 recommended to run it in a dedicated chroot, a dedicated virtual server, or on a
 dedicated machine. You have been warned.
 
@@ -126,8 +126,8 @@ dedicated machine. You have been warned.
 ## Hosting a website
 
 The index of the repserver shows a "404 Not found" error by default. If you want
-to spice-up your repserver you may create a directory $STOREDIR/static and put
+to spice-up your repserver you may create a directory `$STOREDIR/static` and put
 files into it. These files will be served as with any other standard websert. It
 does however not support dynamic content, redirects and similar features. Just
-create $STOREDIR/static/index.html to speak to the world!
+create `$STOREDIR/static/index.html` to speak to the world!
 

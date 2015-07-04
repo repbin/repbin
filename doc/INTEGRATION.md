@@ -4,15 +4,15 @@ Repclient includes some aids to help with application integration. All
 communication between caller and repclient happens through the repclient
 parameters and file descriptors.
 
-To get started, enable the "--verbose" and "--appdata" parameters when calling
+To get started, enable the `--verbose` and `--appdata` parameters when calling
 repclient. This will enabled output on  stderr that is suitable for caller
-interaction. The format is "STATUS (subject):\tDATA\n". The subject of the
-message is always encapsulated in brackets () and the data always follows a tab.
+interaction. The format is `STATUS (subject):\tDATA\n`. The subject of the
+message is always encapsulated in brackets `()` and the data always follows a tab.
 
 Input and output of file/post data should happen through the use of stdin/stdout
-pipes, alternatively the --in and --out parameters accept a number which is
-interpreted as a file descriptor. File descriptors will be read/written ONLY
-when needed and exactly WHILE needed. As soon as repclient knows that it will
+pipes, alternatively the `--in` and `--out` parameters accept a number which is
+interpreted as a file descriptor. File descriptors will be read/written **only**
+when needed and exactly **while** needed. As soon as repclient knows that it will
 not further use the file descriptor it will close it.
 
 
@@ -23,16 +23,17 @@ available to calling applications (see below) and requests keys from the calling
 application.
 
 To request keys, two mutually exclusive methods are vailable. The use of
---privkey=FileDescriptor (where FileDescriptor is a number) allows only the
+`--privkey=FileDescriptor` (where FileDescriptor is a number) allows only the
 provision of keys before the message is parsed. In this case the calling
 operation must already know which private key matches the message. Repclient
-will send "STATUS(KeyMGT): ENTER KEY" over stderr before starting to read the
+will send `STATUS(KeyMGT): ENTER KEY` over stderr before starting to read the
 key.
 
 The second method is interactive key requests from the caller. It requires
---keymgt=FileDescriptor as parameter when calling repclient. For each public key
-for which a private key is required, repclient will send "STATUS(KeyMGTRequest):
-$PublicKey$" on stderr. It then starts reading from the file descriptor.
+`--keymgt=FileDescriptor` as parameter when calling repclient. For each public key
+for which a private key is required, repclient will send
+`STATUS(KeyMGTRequest): $PublicKey$` on stderr.
+It then starts reading from the file descriptor.
 
 Success/Erro is signalled by:
 ```
@@ -40,7 +41,8 @@ Success/Erro is signalled by:
 	STATUS(KeyMGT): READ FAILURE
 ```
 
-The --privkey=FileDescriptor method should be used for encryption operations. --keymgt=FileDescriptor is ONLY available for the decrypt operation.
+The `--privkey=FileDescriptor` method should be used for encryption operations.
+`--keymgt=FileDescriptor` is **only** available for the decrypt operation.
 
 If repclient creates keys, the following status output is available:
 Embedded keys (auto-generated):
@@ -64,7 +66,7 @@ Fetching messages:
 	STATUS(FetchComplete): $MessageID$
 	STATUS(FetchError): $MessageID$
 	STATUS(FetchResult): ERROS $count$
-	STATUS(FetchResult): OK 
+	STATUS(FetchResult): OK
 	STATUS(FetchServer): $Server$
 	STATUS(Fetch): $MessageID$
 ```
@@ -108,4 +110,3 @@ Repost message handling:
 	STATUS(STM): $MinDelay$ $MaxDelay$ $SendTime$
 	STATUS(STMTrans): $File$
 ```
-
