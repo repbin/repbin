@@ -1,3 +1,4 @@
+// repclient is the repbin client to send and receive files.
 package main
 
 import (

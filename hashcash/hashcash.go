@@ -1,4 +1,4 @@
-// Package hashcash implements the hashcash algorithm
+// Package hashcash implements the hashcash algorithm.
 package hashcash
 
 import (

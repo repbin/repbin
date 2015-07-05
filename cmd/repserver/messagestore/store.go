@@ -1,4 +1,4 @@
-// Package messagestore implements storage for messages
+// Package messagestore implements storage for messages.
 package messagestore
 
 import (

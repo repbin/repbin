@@ -1,7 +1,7 @@
-// Package keyproof implements a simple authentication system based on ed25519 signatures
-// Alice sends a token to Bob that authenticates Alice to Bob and contains time information
-// Bob then verifies and counter-signs the token and sends it back to Alice
-// Alice verifies the original token, the counter-signature and the timing information and grants access or denies it
+// Package keyproof implements a simple authentication system based on ed25519 signatures.
+// Alice sends a token to Bob that authenticates Alice to Bob and contains time information.
+// Bob then verifies and counter-signs the token and sends it back to Alice.
+// Alice verifies the original token, the counter-signature and the timing information and grants access or denies it.
 package keyproof
 
 import (

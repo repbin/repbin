@@ -1,3 +1,4 @@
+// Package listparse implements functions to read and write repbin message lists.
 package listparse
 
 import (
@@ -19,7 +20,7 @@ var (
 	ErrSomeErrors = errors.New("listparse: List contains some errors, recovered")
 )
 
-// WriteMessageList formats a message list into a list of newline separated lines with space separated values
+// WriteMessageList formats a message list into a list of newline separated lines with space separated values.
 func WriteMessageList(messages []*structs.MessageStruct, w io.Writer) {
 	for _, msg := range messages {
 		line := []byte("IDX: ")
@@ -33,8 +34,8 @@ func lineToMsgStruct(d []byte) *structs.MessageStruct {
 	return structs.MessageStructDecode(d)
 }
 
-// ReadMessageList reads a message list from reader and outputs a list of MessageStructs
-// Callers must verify that messages is nil or that err!=ErrSomeErrors
+// ReadMessageList reads a message list from reader and outputs a list of MessageStructs.
+// Callers must verify that messages is nil or that err != ErrSomeErrors.
 func ReadMessageList(d []byte) (messages []*structs.MessageStruct, lastline []byte, err error) {
 	var countErrors, countLines int
 	idxm := []byte("IDX:")

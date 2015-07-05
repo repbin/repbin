@@ -24,7 +24,7 @@ Fetch:
 
 ## Installation
 
-Client software to send and receive file:
+Client software to send and receive files:
 
 	go get -u github.com/repbin/repbin/cmd/repclient
 

@@ -1,8 +1,9 @@
-// repmbox.go handles repbin mailboxes.
-// release 20150603
-// you can reach me with
+// repmbox handles repbin mailboxes.
+//
+// Release 20150603.
+// You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
-// don't forget to put your own key into your message! (create with repmbox -add)
+// Don't forget to put your own key into your message! (create with repmbox -add)
 package main
 
 import (

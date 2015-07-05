@@ -1,3 +1,4 @@
+// Package repproto implements the repbin protocol wrappers.
 package repproto
 
 import (

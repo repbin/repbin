@@ -1,4 +1,4 @@
-// Package deferconsole writes data with level filters and defer to stdout/stderr
+// Package deferconsole writes data with level filters and defer to stdout/stderr.
 package deferconsole
 
 import (

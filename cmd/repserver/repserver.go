@@ -1,3 +1,4 @@
+// repserver is the repbin server that makes posts available to users.
 package main
 
 import (
