@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/repbin/repbin/cmd/repserver/stat"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
@@ -55,5 +56,8 @@ func (ms MessageServer) Fetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Debugs("Fetch OK\n")
+	if ms.Stat {
+		stat.Input <- stat.Fetch
+	}
 	return
 }

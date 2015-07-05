@@ -3,6 +3,7 @@ package handlers
 import (
 	"time"
 
+	"github.com/repbin/repbin/cmd/repserver/stat"
 	log "github.com/repbin/repbin/deferconsole"
 )
 
@@ -18,6 +19,11 @@ func (ms MessageServer) notifyWatch() {
 	fetchTick := time.Tick(time.Duration(ms.FetchDuration) * time.Second)
 	expireTick := time.Tick(time.Duration(ms.ExpireDuration) * time.Second)
 	expireFSTick := time.Tick(time.Duration(ms.ExpireFSDuration) * time.Second)
+	var statTick <-chan time.Time
+	if ms.Stat {
+		// show statistics once a minute
+		statTick = time.Tick(60 * time.Second)
+	}
 	for {
 		select {
 		case <-notifyTick:
@@ -36,6 +42,8 @@ func (ms MessageServer) notifyWatch() {
 		case <-expireFSTick:
 			log.Debugs("ExpireFS run started.\n")
 			ms.DB.ExpireFromFS()
+		case <-statTick:
+			stat.Input <- stat.Show
 		case <-ms.notifyChan:
 			log.Debugs("Notification reason\n")
 			lastMessage = time.Now().Unix()

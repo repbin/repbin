@@ -104,8 +104,9 @@ type MessageServer struct {
 	HubOnly              bool      // should this server act only as hub?
 	StepLimit            int       // Boost limit
 	ListenPort           int       // what port to listen on for http
-	MinStoreTime         int       //minimum time in seconds for storage
+	MinStoreTime         int       // minimum time in seconds for storage
 	MaxStoreTime         int       // maximum time in seconds for storage
+	Stat                 bool      // calculate and show server usage statistics
 	notifyChan           chan bool // Notification channel. Write to notify system about new message
 }
 

@@ -23,7 +23,10 @@ import (
 // Version of this release
 const Version = "0.0.1 very alpha"
 
-var start *bool
+var (
+	start *bool
+	stat  *bool
+)
 
 func init() {
 	version := flag.Bool("version", false, "Print version information")
@@ -31,6 +34,7 @@ func init() {
 	configfile := flag.String("configfile", "", "Path to configuration file")
 	verbose := flag.Bool("verbose", false, "Show some verbose output")
 	start = flag.Bool("start", false, "Start server")
+	stat = flag.Bool("stat", false, "Enable usage statistics")
 	flag.Parse()
 	if *version {
 		fmt.Printf("Repserver: %s\n", Version)
@@ -57,6 +61,10 @@ func init() {
 	}
 	if *verbose {
 		log.SetMinLevel(log.LevelDebug)
+	}
+	if *stat && !*verbose {
+		fmt.Println("Error: option --stat requires option --verbose")
+		os.Exit(1)
 	}
 	err := loadConfig(*configfile)
 	if err != nil {
@@ -88,6 +96,7 @@ func main() {
 		os.Exit(1)
 	}
 	applyConfig(ms)
+	ms.Stat = *stat
 	if *start {
 		ms.RunServer()
 	} else {

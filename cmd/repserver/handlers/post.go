@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/repbin/repbin/cmd/repserver/stat"
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
@@ -88,6 +89,9 @@ func (ms MessageServer) ProcessPost(postdata io.ReadCloser, oneTime bool, expire
 		return fmt.Sprintf("ERROR: %s\n", err)
 	}
 	log.Debugf("Post:Added: %x\n", MessageID[:12])
+	if ms.Stat {
+		stat.Input <- stat.Post
+	}
 	return "SUCCESS: Connection close\n"
 }
 
