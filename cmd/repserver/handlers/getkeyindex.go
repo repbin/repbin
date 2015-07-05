@@ -14,7 +14,7 @@ import (
 	"github.com/repbin/repbin/utils/keyauth"
 )
 
-// GetKeyIndex returns the index for a key
+// GetKeyIndex returns the index for a key.
 func (ms MessageServer) GetKeyIndex(w http.ResponseWriter, r *http.Request) {
 	var pubKey *message.Curve25519Key
 	var auth []byte

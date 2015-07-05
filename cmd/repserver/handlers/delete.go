@@ -9,7 +9,7 @@ import (
 	"github.com/repbin/repbin/utils"
 )
 
-// Delete implements the delete call for messages
+// Delete implements the delete call for messages.
 func (ms MessageServer) Delete(w http.ResponseWriter, r *http.Request) {
 	var messageID *[message.MessageIDSize]byte
 	var privateKey *message.Curve25519Key

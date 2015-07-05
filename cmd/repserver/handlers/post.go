@@ -24,7 +24,7 @@ func deferVerify(d []byte) (*message.Curve25519Key, *[message.MessageIDSize]byte
 	return recKeys.ConstantPubKey, messageID, nil
 }
 
-// ProcessPost verifies and adds a post to the database
+// ProcessPost verifies and adds a post to the database.
 func (ms MessageServer) ProcessPost(postdata io.ReadCloser, oneTime bool, expireRequest uint64) string {
 	data, err := utils.MaxRead(ms.MaxPostSize, postdata)
 	if err != nil {
@@ -91,7 +91,7 @@ func (ms MessageServer) ProcessPost(postdata io.ReadCloser, oneTime bool, expire
 	return "SUCCESS: Connection close\n"
 }
 
-// GenPostHandler returns a handler for message posting
+// GenPostHandler returns a handler for message posting.
 func (ms MessageServer) GenPostHandler(oneTime bool) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var expireRequest uint64

@@ -15,7 +15,7 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 )
 
-// GetGlobalIndex returns the global index
+// GetGlobalIndex returns the global index.
 func (ms MessageServer) GetGlobalIndex(w http.ResponseWriter, r *http.Request) {
 	var pubKey *message.Curve25519Key
 	start := int64(0)
@@ -70,7 +70,7 @@ func (ms MessageServer) GetGlobalIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// AuthenticatePeer verifies an existing authStr and matches it to the known peers
+// AuthenticatePeer verifies an existing authStr and matches it to the known peers.
 func (ms MessageServer) AuthenticatePeer(authStr string) error {
 	var counterSig [keyproof.ProofTokenSignedSize]byte
 	var auth []byte
