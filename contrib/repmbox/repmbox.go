@@ -1,6 +1,6 @@
 // repmbox handles repbin mailboxes.
 //
-// Release 20150603.
+// Release 20150605.
 // You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
 // Don't forget to put your own key into your message! (create with repmbox -add)
@@ -233,6 +233,7 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 		}
 		var user string
 		var stmfile string
+		var keyNotAvailable bool
 		keys := cfg.getSenderKeys()
 		scanner := bufio.NewScanner(stderr)
 		for scanner.Scan() {
@@ -245,12 +246,17 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 				if parts[0] == "STATUS (KeyMGTRequest):" {
 					key, ok := keys[parts[1]]
 					if !ok {
-						return fmt.Errorf("key for %s not found", parts[1])
+						if _, err := w.WriteString("not available\n"); err != nil {
+							return err
+						}
+						keyNotAvailable = true
+						break
+					} else {
+						if _, err := w.WriteString(key.privKey + "\n"); err != nil {
+							return err
+						}
+						user = key.user
 					}
-					if _, err := w.WriteString(key.privKey + "\n"); err != nil {
-						return err
-					}
-					user = key.user
 				} else if parts[0] == "STATUS (STMFile):" {
 					stmfile = parts[1]
 				}
@@ -261,11 +267,14 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 		if err := scanner.Err(); err != nil {
 			return err
 		}
-		if err := cmd.Wait(); err != nil {
+		err = cmd.Wait()
+		if !keyNotAvailable && err != nil {
 			return fmt.Errorf("repclient call failed with: %s", err)
 		}
 		if stmfile != "" {
 			fmt.Printf("new repost message from %s written to %s\n", user, stmfile)
+		} else if keyNotAvailable {
+			fmt.Println("key not available, skipping message forever!")
 		} else {
 			// make sure output directory exists
 			resdir := path.Join(outdir, user)
