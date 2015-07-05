@@ -10,7 +10,7 @@ import (
 	log "github.com/repbin/repbin/deferconsole"
 )
 
-// RunServer starts the HTTP handlers
+// RunServer starts the HTTP handlers.
 func (ms MessageServer) RunServer() {
 	ts, err := rand.Int(rand.Reader, big.NewInt(ms.MaxTimeSkew))
 	if err != nil {

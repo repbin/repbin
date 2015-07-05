@@ -6,7 +6,7 @@ import (
 	log "github.com/repbin/repbin/deferconsole"
 )
 
-// FetchRun is called when it is time to update peer information and load messages
+// FetchRun is called when it is time to update peer information and load messages.
 func (ms MessageServer) FetchRun() {
 	ms.LoadPeers()
 	ms.FetchPeers()

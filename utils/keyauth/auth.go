@@ -1,4 +1,4 @@
-// Package keyauth provides very simple knowledge proof for curve25519 private key belonging to shared public key
+// Package keyauth provides very simple knowledge proof for curve25519 private key belonging to shared public key.
 package keyauth
 
 import (

@@ -1,4 +1,4 @@
-// Package utils implements a few utilities for repbin commands
+// Package utils implements a few utilities for repbin commands.
 package utils
 
 import (

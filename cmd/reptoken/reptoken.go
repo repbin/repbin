@@ -1,3 +1,4 @@
+// reptoken is the repbin tool to generate hashcash tokens that are required for posting to repservers.
 package main
 
 import (

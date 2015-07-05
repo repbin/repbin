@@ -10,7 +10,7 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 )
 
-// GetNotify receives notifications
+// GetNotify receives notifications.
 func (ms MessageServer) GetNotify(w http.ResponseWriter, r *http.Request) {
 	var proof [keyproof.ProofTokenSize]byte
 	w.Header().Set("Content-Type", "text/plain; charset=us-ascii")

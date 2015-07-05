@@ -1,8 +1,9 @@
-// repmulti.go sends and retrieves multi-part repbin messages.
-// release 20150603
-// you can reach me with
+// repmulti sends and retrieves multi-part repbin messages.
+//
+// Release 20150603.
+// You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_3kW1bXjj2WbaxBBRbtWCgjx1Qz9VfvDgyYnBFz5Ad9wL
-// don't forget to put your own key into your message!
+// Don't forget to put your own key into your message!
 package main
 
 import (

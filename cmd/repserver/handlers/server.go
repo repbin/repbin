@@ -66,11 +66,11 @@ var (
 	ErrBadMessageID = errors.New("server: MessageID unexpected")
 )
 
-// Workers defines how many parallel index access goroutines may exist without locking
+// Workers defines how many parallel index access goroutines may exist without locking.
 var Workers = 100
 var enforceTimeOuts = true
 
-// MessageServer provides handlers
+// MessageServer provides handlers.
 type MessageServer struct {
 	DB                   *messagestore.Store
 	path                 string // root of data
@@ -109,18 +109,18 @@ type MessageServer struct {
 	notifyChan           chan bool // Notification channel. Write to notify system about new message
 }
 
-// ServerInfo public server info
+// ServerInfo contains the public server information.
 type ServerInfo struct {
 	Time            int64
 	AuthPubKey      string
 	AuthChallenge   string
 	MaxPostSize     int64    // Maximum post size
-	MinPostSize     int      //Minimum post size
+	MinPostSize     int      // Minimum post size
 	MinHashCashBits byte     // Minimum hashcash bits required
 	Peers           []string // list of known peers
 }
 
-// New returns a MessageServer
+// New returns a MessageServer.
 func New(path string, pubKey, privKey []byte) (*MessageServer, error) {
 	var err error
 	ms := new(MessageServer)
@@ -205,12 +205,12 @@ func randomNumber(max int64) int64 {
 	return max / 2
 }
 
-// RandomSleep makes the go routine sleep for a random time up to ms.MaxSleep
+// RandomSleep makes the go routine sleep for a random time up to ms.MaxSleep.
 func (ms MessageServer) RandomSleep() {
 	time.Sleep(time.Duration(randomNumber(ms.MaxSleep)))
 }
 
-// ServeID returns server information
+// ServeID returns server information.
 func (ms MessageServer) ServeID(w http.ResponseWriter, r *http.Request) {
 	ms.RandomSleep()
 	now := time.Now().Unix() + ms.TimeSkew

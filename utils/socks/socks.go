@@ -1,3 +1,4 @@
+// Package socks implements a SOCKS proxy for repbin.
 package socks
 
 import (

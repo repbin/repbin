@@ -21,24 +21,24 @@ const (
 	exampleURL = "http://example.onion/"
 )
 
-// Peer is a single peer as loaded from file
+// Peer is a single peer as loaded from file.
 type Peer struct {
 	PubKey [ed25519.PublicKeySize]byte // Peer's public key for ping authentication
 	URL    string                      // Peer's URL
 	IsHub  bool                        // Is the peer a hub?
 }
 
-// PeerEncoded is an encoded peer
+// PeerEncoded is an encoded peer.
 type PeerEncoded struct {
 	PubKey string
 	URL    string
 	IsHub  bool
 }
 
-// PeerList contains all peers
+// PeerList contains all peers.
 type PeerList map[[ed25519.PublicKeySize]byte]Peer
 
-// PeerListEncoded .
+// PeerListEncoded is an encoded peer list.
 type PeerListEncoded []PeerEncoded
 
 var peerURLs []string
@@ -53,7 +53,7 @@ func init() {
 	peerURLsMutex = new(sync.Mutex)
 }
 
-// LoadPeers from file
+// LoadPeers from file.
 func (ms MessageServer) LoadPeers() {
 	var prePeerlist PeerListEncoded
 	var myPeerURLs []string
@@ -122,7 +122,7 @@ func (ms MessageServer) getPeerURLs() []string {
 	return ret
 }
 
-// PeerKnown tests if a peer is known
+// PeerKnown tests if a peer is known.
 func (ms MessageServer) PeerKnown(PubKey *[ed25519.PublicKeySize]byte) bool {
 	systemPeersMutex.Lock()
 	defer systemPeersMutex.Unlock()
@@ -130,7 +130,7 @@ func (ms MessageServer) PeerKnown(PubKey *[ed25519.PublicKeySize]byte) bool {
 	return ok
 }
 
-// NotifyPeers runs notification for all peers
+// NotifyPeers runs notification for all peers.
 func (ms MessageServer) NotifyPeers() {
 	systemPeersMutex.Lock()
 	defer systemPeersMutex.Unlock()
@@ -162,7 +162,7 @@ func (ms MessageServer) notifyPeer(PubKey *[ed25519.PublicKeySize]byte, url stri
 	}
 }
 
-// FetchPeers checks the peers for new messages, and downloads them
+// FetchPeers checks the peers for new messages, and downloads them.
 func (ms MessageServer) FetchPeers() {
 	systemPeersMutex.Lock()
 	defer systemPeersMutex.Unlock()
@@ -173,7 +173,7 @@ func (ms MessageServer) FetchPeers() {
 	}
 }
 
-// fetchPeer downloads new messages from peer
+// fetchPeer downloads new messages from peer.
 func (ms MessageServer) fetchPeer(PubKey *[ed25519.PublicKeySize]byte, url string) {
 	// Get token, lastpos from database
 	var doUpdate bool
@@ -285,7 +285,7 @@ FetchLoop:
 	}
 }
 
-// FetchPost fetches a post from a peer and adds it
+// FetchPost fetches a post from a peer and adds it.
 func (ms MessageServer) FetchPost(url, auth string, msgID [message.MessageIDSize]byte, expireRequest uint64) error {
 	// Fetch the post
 	proto := repproto.New(ms.SocksProxy, "")

@@ -10,7 +10,7 @@ import (
 	"github.com/repbin/repbin/utils"
 )
 
-// Fetch returns a single message
+// Fetch returns a single message.
 func (ms MessageServer) Fetch(w http.ResponseWriter, r *http.Request) {
 	var messageID *[message.MessageIDSize]byte
 	w.Header().Set("Content-Type", "text/plain; charset=us-ascii")
