@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/repbin/repbin/cmd/repserver/stat"
 	log "github.com/repbin/repbin/deferconsole"
 )
 
@@ -23,6 +24,10 @@ func (ms MessageServer) RunServer() {
 	ms.notifyChan = make(chan bool, 3)
 	// Load peers
 	ms.LoadPeers()
+	// Start statistics goroutine
+	if ms.Stat {
+		go stat.Run()
+	}
 	// Start timers
 	go ms.notifyWatch()
 	// static file handler
