@@ -22,6 +22,13 @@ const (
 	Show
 )
 
+const (
+	oneMin  = 1 * 60
+	fiveMin = 5 * 60
+	oneHour = 60 * 60
+	oneDay  = 24 * 60 * 60
+)
+
 // Input is the repserver statistics input channel.
 var Input = make(chan Event, 1024)
 
@@ -43,6 +50,7 @@ func removeOld(l *list.List, cutoff int64) {
 
 // Run starts the statistics handler.
 func Run() {
+	start := now()
 	postList1 := list.New()
 	postList5 := list.New()
 	postList60 := list.New()
@@ -66,24 +74,44 @@ func Run() {
 			fetchList60.PushBack(t)
 			fetchList1440.PushBack(t)
 		case Show:
-			removeOld(postList1, t-1*60)
-			removeOld(postList5, t-5*60)
-			removeOld(postList60, t-60*60)
-			removeOld(postList1440, t-1440*60)
-			removeOld(fetchList1, t-1*60)
-			removeOld(fetchList5, t-5*60)
-			removeOld(fetchList60, t-60*60)
-			removeOld(fetchList1440, t-1440*60)
-			log.Debugf("Posts/minute:   %8.3f (1m) %8.3f (5m) %8.3f (1h) %8.3f (24h)\n",
-				float64(postList1.Len()),
-				float64(postList5.Len())/5.0,
-				float64(postList60.Len())/60.0,
-				float64(postList1440.Len())/1440.0)
-			log.Debugf("Fetches/minute: %8.3f (1m) %8.3f (5m) %8.3f (1h) %8.3f (24h)\n",
-				float64(fetchList1.Len()),
-				float64(fetchList5.Len())/5.0,
-				float64(fetchList60.Len())/60.0,
-				float64(fetchList1440.Len())/1440.0)
+			removeOld(postList1, t-oneMin)
+			removeOld(postList5, t-fiveMin)
+			removeOld(postList60, t-oneHour)
+			removeOld(postList1440, t-oneDay)
+			removeOld(fetchList1, t-oneMin)
+			removeOld(fetchList5, t-fiveMin)
+			removeOld(fetchList60, t-oneHour)
+			removeOld(fetchList1440, t-oneDay)
+			postOneMin := float64(postList1.Len())
+			postFiveMin := float64(postList5.Len()) / 5.0
+			postOneHour := float64(postList60.Len()) / 60.0
+			postOneDay := float64(postList1440.Len()) / 1440.0
+			fetchOneMin := float64(fetchList1.Len())
+			fetchFiveMin := float64(fetchList5.Len()) / 5.0
+			fetchOneHour := float64(fetchList60.Len()) / 60.0
+			fetchOneDay := float64(fetchList1440.Len()) / 1440.0
+			if t-oneDay >= start {
+				log.Debugf("Posts/minute:   %8.3f (1m) %8.3f (5m) %8.3f (1h) %8.3f (24h)\n",
+					postOneMin, postFiveMin, postOneHour, postOneDay)
+				log.Debugf("Fetches/minute: %8.3f (1m) %8.3f (5m) %8.3f (1h) %8.3f (24h)\n",
+					fetchOneMin, fetchFiveMin, fetchOneHour, fetchOneDay)
+			} else if t-oneHour >= start {
+				log.Debugf("Posts/minute:   %8.3f (1m) %8.3f (5m) %8.3f (1h)\n",
+					postOneMin, postFiveMin, postOneHour)
+				log.Debugf("Fetches/minute: %8.3f (1m) %8.3f (5m) %8.3f (1h)\n",
+					fetchOneMin, fetchFiveMin, fetchOneHour)
+
+			} else if t-fiveMin >= start {
+				log.Debugf("Posts/minute:   %8.3f (1m) %8.3f (5m)\n",
+					postOneMin, postFiveMin)
+				log.Debugf("Fetches/minute: %8.3f (1m) %8.3f (5m)\n",
+					fetchOneMin, fetchFiveMin)
+			} else {
+				log.Debugf("Posts/minute:   %8.3f (1m)\n",
+					postOneMin)
+				log.Debugf("Fetches/minute: %8.3f (1m)\n",
+					fetchOneMin)
+			}
 		}
 	}
 }
