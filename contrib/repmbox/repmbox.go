@@ -19,6 +19,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type sender struct {
@@ -324,6 +325,7 @@ func main() {
 	configFile := flag.String("configfile", path.Join(configDir, "repmbox.config"), "Path to configuration file")
 	genconfig := flag.Bool("genconfig", false, "Generate config file")
 	listSender := flag.Bool("list", false, "List mailboxes")
+	loop := flag.Bool("loop", false, "Retrieve new messages every 5 minutes")
 	outdir := flag.String("outdir", path.Join(configDir, "messages"), "Directory for downloaded messages")
 	stmdir := flag.String("stmdir", path.Join(configDir, "stmdir"), "Directory for STM messages")
 	verbose := flag.Bool("v", false, "Be verbose")
@@ -353,30 +355,40 @@ func main() {
 			fmt.Println(snd.Sender, snd.PublicKey)
 		}
 	} else {
-		more := true
-		for more {
-			var list []string
-			// download new messages
-			list, more, err = cfg.getList()
-			if err != nil {
-				fatal(err)
+		for true {
+			more := true
+			for more {
+				var list []string
+				// download new messages
+				list, more, err = cfg.getList()
+				if err != nil {
+					fatal(err)
+				}
+				if len(list) == 0 {
+					if *verbose {
+						fmt.Println("no new messages")
+					}
+					break
+				}
+				// get new messages
+				if err := cfg.getMessages(list, *outdir, *stmdir, *verbose); err != nil {
+					fatal(err)
+				}
+				// increase start
+				cfg.Start += len(list)
+				if err := cfg.save(*configFile); err != nil {
+					fatal(err)
+				}
+				if *verbose {
+					fmt.Printf("more: %s\n", strconv.FormatBool(more))
+				}
 			}
-			if len(list) == 0 {
-				fmt.Println("no new messages")
-				return
-			}
-			// get new messages
-			if err := cfg.getMessages(list, *outdir, *stmdir, *verbose); err != nil {
-				fatal(err)
-			}
-			// increase start
-			cfg.Start += len(list)
-			if err := cfg.save(*configFile); err != nil {
-				fatal(err)
-			}
-			if *verbose {
-				fmt.Printf("more: %s\n", strconv.FormatBool(more))
+			if *loop {
+				time.Sleep(5 * time.Minute)
+			} else {
+				break
 			}
 		}
+
 	}
 }
