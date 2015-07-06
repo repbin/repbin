@@ -15,6 +15,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"os/signal"
 	"os/user"
 	"path"
 	"strconv"
@@ -342,9 +343,26 @@ func appDataDir(appName string) (string, error) {
 	return path.Join(user.HomeDir, ".config", appName), nil
 }
 
-func fatal(err error) {
-	fmt.Fprintf(os.Stderr, "%s: error: %s\n", os.Args[0], err)
-	os.Exit(1)
+func writePIDFile(configDir string) (string, error) {
+	// make sure config directory exists
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return "", err
+	}
+	pidFile := path.Join(configDir, "repmbox.pid")
+	if _, err := os.Stat(pidFile); err == nil {
+		return "", fmt.Errorf("PID file '%s' already exists, another instance running?", pidFile)
+	}
+	fp, err := os.Create(pidFile)
+	if err != nil {
+		return "", err
+	}
+	if _, err := fp.WriteString(strconv.Itoa(os.Getpid()) + "\n"); err != nil {
+		return "", err
+	}
+	if err := fp.Close(); err != nil {
+		return "", err
+	}
+	return pidFile, nil
 }
 
 func mainFunc(configDir string) error {
@@ -369,6 +387,19 @@ func mainFunc(configDir string) error {
 		}
 		return nil
 	}
+	// write PID file
+	pidFile, err := writePIDFile(configDir)
+	if err != nil {
+		return err
+	}
+	defer os.Remove(pidFile)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c // blocks until signal is received
+		os.Remove(pidFile)
+		os.Exit(2)
+	}()
 	// load config file
 	cfg, err := loadConfig(*configFile, configDir)
 	if err != nil {
@@ -395,6 +426,11 @@ func mainFunc(configDir string) error {
 		}
 	}
 	return nil
+}
+
+func fatal(err error) {
+	fmt.Fprintf(os.Stderr, "%s: error: %s\n", os.Args[0], err)
+	os.Exit(1)
 }
 
 func main() {
