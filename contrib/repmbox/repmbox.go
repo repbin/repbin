@@ -249,9 +249,6 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, show, verbo
 		scanner := bufio.NewScanner(stderr)
 		for scanner.Scan() {
 			line := scanner.Text()
-			if verbose {
-				fmt.Println(line)
-			}
 			parts := strings.Split(line, "\t")
 			if len(parts) >= 2 {
 				if parts[0] == "STATUS (KeyMGTRequest):" {
