@@ -1,6 +1,6 @@
 // repmbox handles repbin mailboxes.
 //
-// Release 20150605.
+// Release 20150606.
 // You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
 // Don't forget to put your own key into your message! (create with repmbox -add)
@@ -15,10 +15,12 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"os/signal"
 	"os/user"
 	"path"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type sender struct {
@@ -154,6 +156,15 @@ func (cfg *config) getList() ([]string, bool, error) {
 	var out bytes.Buffer
 	cmd.Stderr = &out
 	if err := cmd.Run(); err != nil {
+		// check if error indicates no new messages
+		lines := strings.Split(out.String(), "\n")
+		for _, line := range lines {
+			if line == "FATAL: List error: listparse: No entries in list" {
+				// return empty list
+				return nil, false, nil
+			}
+		}
+		// show and return error
 		fmt.Print(out.String())
 		return nil, false, err
 	}
@@ -272,7 +283,7 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 			return fmt.Errorf("repclient call failed with: %s", err)
 		}
 		if stmfile != "" {
-			fmt.Printf("new repost message from %s written to %s\n", user, stmfile)
+			fmt.Printf("new repost message from %s written to:\n%s\n", user, stmfile)
 		} else if keyNotAvailable {
 			fmt.Println("key not available, skipping message forever!")
 		} else {
@@ -286,7 +297,39 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 			if err := ioutil.WriteFile(path.Join(resdir, msg), out.Bytes(), 0600); err != nil {
 				return err
 			}
-			fmt.Printf("new message from %s written to %s\n", user, filename)
+			fmt.Printf("new message from %s written to:\n%s\n", user, filename)
+		}
+	}
+	return nil
+}
+
+func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, verbose bool) error {
+	more := true
+	for more {
+		var list []string
+		var err error
+		// get list
+		list, more, err = cfg.getList()
+		if err != nil {
+			return err
+		}
+		if len(list) == 0 {
+			if verbose {
+				fmt.Println("no new messages")
+			}
+			break
+		}
+		// get new messages
+		if err := cfg.getMessages(list, outdir, stmdir, verbose); err != nil {
+			return err
+		}
+		// increase start
+		cfg.Start += len(list)
+		if err := cfg.save(configFile); err != nil {
+			return err
+		}
+		if verbose {
+			fmt.Printf("more: %s\n", strconv.FormatBool(more))
 		}
 	}
 	return nil
@@ -300,6 +343,91 @@ func appDataDir(appName string) (string, error) {
 	return path.Join(user.HomeDir, ".config", appName), nil
 }
 
+func writePIDFile(configDir string) (string, error) {
+	// make sure config directory exists
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return "", err
+	}
+	pidFile := path.Join(configDir, "repmbox.pid")
+	if _, err := os.Stat(pidFile); err == nil {
+		return "", fmt.Errorf("PID file '%s' already exists, another instance running?", pidFile)
+	}
+	fp, err := os.Create(pidFile)
+	if err != nil {
+		return "", err
+	}
+	if _, err := fp.WriteString(strconv.Itoa(os.Getpid()) + "\n"); err != nil {
+		return "", err
+	}
+	if err := fp.Close(); err != nil {
+		return "", err
+	}
+	return pidFile, nil
+}
+
+func mainFunc(configDir string) error {
+	// define options
+	addSender := flag.String("add", "", "Add new mailbox for given sender name")
+	configFile := flag.String("configfile", path.Join(configDir, "repmbox.config"), "Path to configuration file")
+	genconfig := flag.Bool("genconfig", false, "Generate config file")
+	listSender := flag.Bool("list", false, "List mailboxes")
+	loop := flag.Bool("loop", false, "Retrieve new messages every 5 minutes")
+	outdir := flag.String("outdir", path.Join(configDir, "messages"), "Directory for downloaded messages")
+	stmdir := flag.String("stmdir", path.Join(configDir, "stmdir"), "Directory for STM messages")
+	verbose := flag.Bool("v", false, "Be verbose")
+	// parse options
+	flag.Parse()
+	if *genconfig {
+		cfg, err := genConfig()
+		if err != nil {
+			return err
+		}
+		if err := cfg.show(); err != nil {
+			return err
+		}
+		return nil
+	}
+	// write PID file
+	pidFile, err := writePIDFile(configDir)
+	if err != nil {
+		return err
+	}
+	defer os.Remove(pidFile)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c // blocks until signal is received
+		os.Remove(pidFile)
+		os.Exit(2)
+	}()
+	// load config file
+	cfg, err := loadConfig(*configFile, configDir)
+	if err != nil {
+		return err
+	}
+	if *addSender != "" {
+		if err := cfg.addSender(*addSender, *configFile); err != nil {
+			return err
+		}
+	} else if *listSender {
+		for _, snd := range cfg.Sender {
+			fmt.Println(snd.Sender, snd.PublicKey)
+		}
+	} else {
+		for true {
+			if err := cfg.downloadNewMessages(*outdir, *stmdir, *configFile, *verbose); err != nil {
+				return err
+			}
+			if *loop {
+				time.Sleep(5 * time.Minute)
+			} else {
+				break
+			}
+		}
+	}
+	return nil
+}
+
 func fatal(err error) {
 	fmt.Fprintf(os.Stderr, "%s: error: %s\n", os.Args[0], err)
 	os.Exit(1)
@@ -310,60 +438,7 @@ func main() {
 	if err != nil {
 		fatal(err)
 	}
-	// define options
-	addSender := flag.String("add", "", "Add new mailbox for given sender name")
-	configFile := flag.String("configfile", path.Join(configDir, "repmbox.config"), "Path to configuration file")
-	genconfig := flag.Bool("genconfig", false, "Generate config file")
-	listSender := flag.Bool("list", false, "List mailboxes")
-	outdir := flag.String("outdir", path.Join(configDir, "messages"), "Directory for downloaded messages")
-	stmdir := flag.String("stmdir", path.Join(configDir, "stmdir"), "Directory for STM messages")
-	verbose := flag.Bool("v", false, "Be verbose")
-	// parse options
-	flag.Parse()
-	if *genconfig {
-		cfg, err := genConfig()
-		if err != nil {
-			fatal(err)
-		}
-		if err := cfg.show(); err != nil {
-			fatal(err)
-		}
-		return
-	}
-	// load config file
-	cfg, err := loadConfig(*configFile, configDir)
-	if err != nil {
+	if err := mainFunc(configDir); err != nil {
 		fatal(err)
-	}
-	if *addSender != "" {
-		if err := cfg.addSender(*addSender, *configFile); err != nil {
-			fatal(err)
-		}
-	} else if *listSender {
-		for _, snd := range cfg.Sender {
-			fmt.Println(snd.Sender, snd.PublicKey)
-		}
-	} else {
-		more := true
-		for more {
-			var list []string
-			// download new messages
-			list, more, err = cfg.getList()
-			if err != nil {
-				fatal(err)
-			}
-			// get new messages
-			if err := cfg.getMessages(list, *outdir, *stmdir, *verbose); err != nil {
-				fatal(err)
-			}
-			// increase start
-			cfg.Start += len(list)
-			if err := cfg.save(*configFile); err != nil {
-				fatal(err)
-			}
-			if *verbose {
-				fmt.Printf("more: %s\n", strconv.FormatBool(more))
-			}
-		}
 	}
 }
