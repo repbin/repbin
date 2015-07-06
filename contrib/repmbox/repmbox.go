@@ -1,6 +1,6 @@
 // repmbox handles repbin mailboxes.
 //
-// Release 20150605.
+// Release 20150606.
 // You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
 // Don't forget to put your own key into your message! (create with repmbox -add)
@@ -272,7 +272,7 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 			return fmt.Errorf("repclient call failed with: %s", err)
 		}
 		if stmfile != "" {
-			fmt.Printf("new repost message from %s written to %s\n", user, stmfile)
+			fmt.Printf("new repost message from %s written to:\n%s\n", user, stmfile)
 		} else if keyNotAvailable {
 			fmt.Println("key not available, skipping message forever!")
 		} else {
@@ -286,7 +286,7 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 			if err := ioutil.WriteFile(path.Join(resdir, msg), out.Bytes(), 0600); err != nil {
 				return err
 			}
-			fmt.Printf("new message from %s written to %s\n", user, filename)
+			fmt.Printf("new message from %s written to:\n%s\n", user, filename)
 		}
 	}
 	return nil
