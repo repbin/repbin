@@ -387,6 +387,17 @@ func mainFunc(configDir string) error {
 		}
 		return nil
 	}
+	// load config file
+	cfg, err := loadConfig(*configFile, configDir)
+	if err != nil {
+		return err
+	}
+	if *listSender {
+		for _, snd := range cfg.Sender {
+			fmt.Println(snd.Sender, snd.PublicKey)
+		}
+		return nil
+	}
 	// write PID file
 	pidFile, err := writePIDFile(configDir)
 	if err != nil {
@@ -400,18 +411,9 @@ func mainFunc(configDir string) error {
 		os.Remove(pidFile)
 		os.Exit(2)
 	}()
-	// load config file
-	cfg, err := loadConfig(*configFile, configDir)
-	if err != nil {
-		return err
-	}
 	if *addSender != "" {
 		if err := cfg.addSender(*addSender, *configFile); err != nil {
 			return err
-		}
-	} else if *listSender {
-		for _, snd := range cfg.Sender {
-			fmt.Println(snd.Sender, snd.PublicKey)
 		}
 	} else {
 		for true {
