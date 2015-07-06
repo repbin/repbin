@@ -214,7 +214,7 @@ func (cfg *config) getSenderKeys() map[string]senderKey {
 	return keys
 }
 
-func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose bool) error {
+func (cfg *config) getMessages(list []string, outdir, stmdir string, show, verbose bool) error {
 	// make sure STM directory exists
 	if err := os.MkdirAll(stmdir, 0700); err != nil {
 		return err
@@ -298,12 +298,17 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 				return err
 			}
 			fmt.Printf("new message from %s written to:\n%s\n", user, filename)
+			// show message
+			if show {
+				fmt.Println("message content:")
+				fmt.Println(out.String())
+			}
 		}
 	}
 	return nil
 }
 
-func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, verbose bool) error {
+func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, show, verbose bool) error {
 	more := true
 	for more {
 		var list []string
@@ -320,7 +325,7 @@ func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, verbos
 			break
 		}
 		// get new messages
-		if err := cfg.getMessages(list, outdir, stmdir, verbose); err != nil {
+		if err := cfg.getMessages(list, outdir, stmdir, show, verbose); err != nil {
 			return err
 		}
 		// increase start
@@ -373,6 +378,7 @@ func mainFunc(configDir string) error {
 	listSender := flag.Bool("list", false, "List mailboxes")
 	loop := flag.Bool("loop", false, "Retrieve new messages every 5 minutes")
 	outdir := flag.String("outdir", path.Join(configDir, "messages"), "Directory for downloaded messages")
+	show := flag.Bool("show", false, "Show messages on stdout (additionally)")
 	stmdir := flag.String("stmdir", path.Join(configDir, "stmdir"), "Directory for STM messages")
 	verbose := flag.Bool("v", false, "Be verbose")
 	// parse options
@@ -417,7 +423,7 @@ func mainFunc(configDir string) error {
 		}
 	} else {
 		for true {
-			if err := cfg.downloadNewMessages(*outdir, *stmdir, *configFile, *verbose); err != nil {
+			if err := cfg.downloadNewMessages(*outdir, *stmdir, *configFile, *show, *verbose); err != nil {
 				return err
 			}
 			if *loop {
