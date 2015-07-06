@@ -347,11 +347,7 @@ func fatal(err error) {
 	os.Exit(1)
 }
 
-func main() {
-	configDir, err := appDataDir("repmbox")
-	if err != nil {
-		fatal(err)
-	}
+func mainFunc(configDir string) error {
 	// define options
 	addSender := flag.String("add", "", "Add new mailbox for given sender name")
 	configFile := flag.String("configfile", path.Join(configDir, "repmbox.config"), "Path to configuration file")
@@ -366,21 +362,21 @@ func main() {
 	if *genconfig {
 		cfg, err := genConfig()
 		if err != nil {
-			fatal(err)
+			return err
 		}
 		if err := cfg.show(); err != nil {
-			fatal(err)
+			return err
 		}
-		return
+		return nil
 	}
 	// load config file
 	cfg, err := loadConfig(*configFile, configDir)
 	if err != nil {
-		fatal(err)
+		return err
 	}
 	if *addSender != "" {
 		if err := cfg.addSender(*addSender, *configFile); err != nil {
-			fatal(err)
+			return err
 		}
 	} else if *listSender {
 		for _, snd := range cfg.Sender {
@@ -389,7 +385,7 @@ func main() {
 	} else {
 		for true {
 			if err := cfg.downloadNewMessages(*outdir, *stmdir, *configFile, *verbose); err != nil {
-				fatal(err)
+				return err
 			}
 			if *loop {
 				time.Sleep(5 * time.Minute)
@@ -397,5 +393,16 @@ func main() {
 				break
 			}
 		}
+	}
+	return nil
+}
+
+func main() {
+	configDir, err := appDataDir("repmbox")
+	if err != nil {
+		fatal(err)
+	}
+	if err := mainFunc(configDir); err != nil {
+		fatal(err)
 	}
 }
