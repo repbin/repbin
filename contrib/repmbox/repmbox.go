@@ -154,6 +154,15 @@ func (cfg *config) getList() ([]string, bool, error) {
 	var out bytes.Buffer
 	cmd.Stderr = &out
 	if err := cmd.Run(); err != nil {
+		// check if error indicates no new messages
+		lines := strings.Split(out.String(), "\n")
+		for _, line := range lines {
+			if line == "FATAL: List error: listparse: No entries in list" {
+				// return empty list
+				return nil, false, nil
+			}
+		}
+		// show and return error
 		fmt.Print(out.String())
 		return nil, false, err
 	}
@@ -351,6 +360,10 @@ func main() {
 			list, more, err = cfg.getList()
 			if err != nil {
 				fatal(err)
+			}
+			if len(list) == 0 {
+				fmt.Println("no new messages")
+				return
 			}
 			// get new messages
 			if err := cfg.getMessages(list, *outdir, *stmdir, *verbose); err != nil {
