@@ -302,6 +302,38 @@ func (cfg *config) getMessages(list []string, outdir, stmdir string, verbose boo
 	return nil
 }
 
+func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, verbose bool) error {
+	more := true
+	for more {
+		var list []string
+		var err error
+		// get list
+		list, more, err = cfg.getList()
+		if err != nil {
+			return err
+		}
+		if len(list) == 0 {
+			if verbose {
+				fmt.Println("no new messages")
+			}
+			break
+		}
+		// get new messages
+		if err := cfg.getMessages(list, outdir, stmdir, verbose); err != nil {
+			return err
+		}
+		// increase start
+		cfg.Start += len(list)
+		if err := cfg.save(configFile); err != nil {
+			return err
+		}
+		if verbose {
+			fmt.Printf("more: %s\n", strconv.FormatBool(more))
+		}
+	}
+	return nil
+}
+
 func appDataDir(appName string) (string, error) {
 	user, err := user.Current()
 	if err != nil {
@@ -356,32 +388,8 @@ func main() {
 		}
 	} else {
 		for true {
-			more := true
-			for more {
-				var list []string
-				// download new messages
-				list, more, err = cfg.getList()
-				if err != nil {
-					fatal(err)
-				}
-				if len(list) == 0 {
-					if *verbose {
-						fmt.Println("no new messages")
-					}
-					break
-				}
-				// get new messages
-				if err := cfg.getMessages(list, *outdir, *stmdir, *verbose); err != nil {
-					fatal(err)
-				}
-				// increase start
-				cfg.Start += len(list)
-				if err := cfg.save(*configFile); err != nil {
-					fatal(err)
-				}
-				if *verbose {
-					fmt.Printf("more: %s\n", strconv.FormatBool(more))
-				}
+			if err := cfg.downloadNewMessages(*outdir, *stmdir, *configFile, *verbose); err != nil {
+				fatal(err)
 			}
 			if *loop {
 				time.Sleep(5 * time.Minute)
@@ -389,6 +397,5 @@ func main() {
 				break
 			}
 		}
-
 	}
 }
