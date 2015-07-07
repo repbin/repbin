@@ -6,7 +6,8 @@ Repbin is an encrypted pastebin for the command line that runs over Tor!
 Repbin servers form a distributed network where nodes sync posts with each other
 (like in Usenet or BBS/Fido systems). This makes Repbin resilient and scalable.
 Repbin focuses on privacy (encrypted messages) and anonymity (padding and
-repost chains).
+repost chains). To limit spam and denial-of-service attacks, Repbin uses the
+Hashcash proof-of-work algorithm which is widely known from Bitcoin mining.
 
 Post a file:
 
