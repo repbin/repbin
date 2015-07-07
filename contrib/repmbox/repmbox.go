@@ -1,6 +1,6 @@
 // repmbox handles repbin mailboxes.
 //
-// Release 20150606.
+// Release 20150607.
 // You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
 // Don't forget to put your own key into your message! (create with repmbox -add)
@@ -311,6 +311,9 @@ func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, show, 
 		var list []string
 		var err error
 		// get list
+		if verbose {
+			fmt.Printf("download new messages starting at #%d\n", cfg.Start)
+		}
 		list, more, err = cfg.getList()
 		if err != nil {
 			return err
