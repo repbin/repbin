@@ -77,7 +77,7 @@ func NonceToUInt64(nonce []byte) uint64 {
 // c is the start value for calculation, stop is the end value. Both can be 0 to ignore segemented calculations
 func ComputeNonce(d []byte, bits byte, c, stop uint64) (nonce []byte, ok bool) {
 	bits--
-	x := make([]byte, len(d)+8)
+	x := make([]byte, len(d)+NonceSize)
 	copy(x, d)
 	nonce = x[len(d):]
 	for c < 18446744073709551615 && (stop == 0 || c < stop) {
