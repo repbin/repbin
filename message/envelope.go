@@ -13,14 +13,14 @@ const (
 )
 
 var (
-	// ErrEnvelopeShort is returned if the envelope is too short to even contain a signature header
+	// ErrEnvelopeShort is returned if the envelope is too short to even contain a signature header.
 	ErrEnvelopeShort = errors.New("message: Envelope too short")
 )
 
-// Base64Message is a message encoded in Base64
+// Base64Message is a message encoded in Base64.
 type Base64Message []byte
 
-// GetSignHeader returns the signature header from an message
+// GetSignHeader returns the signature header from an message.
 func (bm Base64Message) GetSignHeader() (*[SignHeaderSize]byte, error) {
 	var ret [SignHeaderSize]byte
 	if len(bm) < signHeaderMaxBase64 {
@@ -35,7 +35,7 @@ func (bm Base64Message) GetSignHeader() (*[SignHeaderSize]byte, error) {
 	return &ret, nil
 }
 
-// Decode a base64 encoded message
+// Decode a base64 encoded message.
 func (bm Base64Message) Decode() ([]byte, error) {
 	dst := make([]byte, base64.StdEncoding.DecodedLen(len(bm)))
 	n, err := base64.StdEncoding.Decode(dst, bm)
@@ -45,7 +45,7 @@ func (bm Base64Message) Decode() ([]byte, error) {
 	return dst[:n], nil
 }
 
-// EncodeBase64 encodes a message to base64
+// EncodeBase64 encodes a message to base64.
 func EncodeBase64(message []byte) Base64Message {
 	dst := make([]byte, base64.StdEncoding.EncodedLen(len(message)))
 	base64.StdEncoding.Encode(dst, message)

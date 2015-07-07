@@ -6,13 +6,13 @@ import (
 	"encoding/binary"
 )
 
-// Version of this release
+// Version of this release.
 const Version = "0.0.1 very alpha"
 
-// NonceSize is the size of a hashcash nonce
+// NonceSize is the size of a hashcash nonce.
 const NonceSize = 8
 
-// BitCount counts leading zero bits in d and returns them
+// BitCount counts leading zero bits in d and returns them.
 func BitCount(d [32]byte) byte {
 	var ret byte
 	for _, x := range d {
@@ -55,7 +55,7 @@ func BitCount(d [32]byte) byte {
 	return ret
 }
 
-// TestNonce verifies that a given nonce generates bits zero bits on d when hashed
+// TestNonce verifies that a given nonce generates bits zero bits on d when hashed.
 func TestNonce(d, nonce []byte, bits byte) (bool, byte) {
 	bits--
 	x := make([]byte, len(d)+len(nonce))
@@ -73,8 +73,9 @@ func NonceToUInt64(nonce []byte) uint64 {
 	return binary.LittleEndian.Uint64(nonce)
 }
 
-// ComputeNonce is the hashcash algorithm
-// c is the start value for calculation, stop is the end value. Both can be 0 to ignore segemented calculations
+// ComputeNonce is the hashcash algorithm.
+// c is the start value for calculation, stop is the end value.
+// Both can be 0 to ignore segemented calculations.
 func ComputeNonce(d []byte, bits byte, c, stop uint64) (nonce []byte, ok bool) {
 	bits--
 	x := make([]byte, len(d)+NonceSize)
