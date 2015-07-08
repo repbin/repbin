@@ -65,11 +65,11 @@ type ConfigVariables struct {
 	PadToLength   int
 	MinHashCash   byte
 	PrivateKey    string
-	KeyDir        string   //directory for signKeys
-	SocksServer   string   //url of socks server (if any)
+	KeyDir        string   // directory for signKeys
+	SocksServer   string   // url of socks server (if any)
 	PeerUpdate    int64    // when did we update the peers last?
 	BootStrapPeer string   // What peer to bootstrap from
-	PasteServers  []string //urls of pastebins
+	PasteServers  []string // urls of pastebins
 }
 
 // OptionsVar .

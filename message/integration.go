@@ -173,10 +173,10 @@ func (sender *Sender) encrypt(messageType byte, message []byte, repost bool) (en
 
 	if repost {
 		log.Debug("This is a repost-message!")
-		//Cut out padding and set padkey
+		// Cut out padding and set padkey
 		meta.PadKey = &body.PadKey
 		myMessage.Body = body.BytesNoPadding()
-		//Repost messages are not base64 encoded since they are embedded anyways
+		// Repost messages are not base64 encoded since they are embedded anyways
 		return myMessage.Bytes(), meta, nil
 	}
 	return EncodeBase64(myMessage.Bytes()), meta, nil

@@ -9,7 +9,7 @@ import (
 	"github.com/repbin/repbin/utils/repproto"
 )
 
-//CmdEncrypt encrypts data
+// CmdEncrypt encrypts data.
 func CmdEncrypt() int {
 	var privkey, embedConstantPrivKey, embedTemporaryPrivKey, embedConstantPubKey, embedTemporaryPubKey *message.Curve25519Key
 	var err error
