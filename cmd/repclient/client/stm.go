@@ -36,7 +36,7 @@ func CmdSTM() int {
 }
 
 func listSTM(dirname string) error {
-	dirname = dirname + string(os.PathSeparator) //dirty
+	dirname = dirname + string(os.PathSeparator) // dirty
 	now := strconv.Itoa(int(time.Now().Unix()))
 	files, err := ioutil.ReadDir(dirname)
 	if err != nil {

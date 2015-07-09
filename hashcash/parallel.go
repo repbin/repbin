@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	// Steps is the number of steps per thread per cycle
+	// Steps is the number of steps per thread per cycle.
 	Steps = uint64(4194304)
-	// SingleThreadBits Number of bits required for parallel computing
+	// SingleThreadBits Number of bits required for parallel computing.
 	SingleThreadBits = byte(20)
 )
 
@@ -17,7 +17,7 @@ type computeResult struct {
 	nonce []byte
 }
 
-// ComputeNonceParallel parallel compute hashcash
+// ComputeNonceParallel computes hashcash in parallel.
 func ComputeNonceParallel(d []byte, bits byte, start, stop uint64) (nonce []byte, ok bool) {
 	ncpus := runtime.NumCPU()
 	if ncpus > 1 {
@@ -45,7 +45,7 @@ func ComputeNonceParallel(d []byte, bits byte, start, stop uint64) (nonce []byte
 	}
 }
 
-// computeNonceThread computes a nonce
+// computeNonceThread computes a nonce.
 func computeNonceThread(d []byte, bits byte, c, stop uint64, res chan<- computeResult) {
 	nonce, ok := ComputeNonce(d, bits, c, stop)
 	res <- computeResult{
@@ -54,7 +54,7 @@ func computeNonceThread(d []byte, bits byte, c, stop uint64, res chan<- computeR
 	}
 }
 
-// ComputeNonceSelect calls parallel or single compute depending on bits
+// ComputeNonceSelect calls parallel or single compute depending on bits.
 func ComputeNonceSelect(d []byte, bits byte, start, stop uint64) (nonce []byte, ok bool) {
 	if bits > SingleThreadBits {
 		return ComputeNonceParallel(d, bits, start, stop)

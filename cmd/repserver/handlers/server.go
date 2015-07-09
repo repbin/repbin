@@ -77,7 +77,7 @@ type MessageServer struct {
 	URL                  string // my own URL
 	AddToPeer            bool   // if to add oneself to the peerlist
 	MaxPostSize          int64  // Maximum post size
-	MinPostSize          int    //Minimum post size
+	MinPostSize          int    // Minimum post size
 	MinHashCashBits      byte   // Minimum hashcash bits required
 	MaxTimeSkew          int64  // Maximum timeskew to use and allow
 	authPrivKey          *message.Curve25519Key

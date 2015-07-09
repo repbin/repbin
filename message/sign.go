@@ -8,18 +8,18 @@ import (
 )
 
 var (
-	// ErrNoKeyFound is returned if no key could be found
+	// ErrNoKeyFound is returned if no key could be found.
 	ErrNoKeyFound = errors.New("message: No signature key found in generation")
-	// ErrBadVersion is returned if a message does not conform to the right version
+	// ErrBadVersion is returned if a message does not conform to the right version.
 	ErrBadVersion = errors.New("message: Wrong version")
-	// ErrHashCash is returned if not enough bits are produced by the ErrHashCash challenge
+	// ErrHashCash is returned if not enough bits are produced by the ErrHashCash challenge.
 	ErrHashCash = errors.New("message: Not enough HashCash bits")
-	// ErrBadSignature is returned if the post signature does not verify
+	// ErrBadSignature is returned if the post signature does not verify.
 	ErrBadSignature = errors.New("message: Signature verification failed")
 )
 
 const (
-	// SignerPubKeySize is the size of a public key used for signing
+	// SignerPubKeySize is the size of a public key used for signing.
 	SignerPubKeySize         = ed25519.PublicKeySize
 	signHeaderVersionStart   = 0
 	signHeaderPubkeyStart    = 1
@@ -33,7 +33,7 @@ const (
 	signHeaderMsgIDEnd       = signHeaderMsgIDStart + MessageIDSize
 )
 
-// SignKeyPair represents a signature key pari
+// SignKeyPair represents a signature key pair.
 type SignKeyPair struct {
 	PublicKey  *[SignerPubKeySize]byte
 	PrivateKey *[ed25519.PrivateKeySize]byte
@@ -60,7 +60,7 @@ func GenKey(bits byte) (keypair *SignKeyPair, err error) {
 	return &sk, nil
 }
 
-// Marshal a keypair into a byte slice
+// Marshal a keypair into a byte slice.
 func (keypair *SignKeyPair) Marshal() []byte {
 	r := make([]byte, SignerPubKeySize+ed25519.PrivateKeySize+hashcash.NonceSize+1)
 	copy(r[0:SignerPubKeySize], keypair.PublicKey[:])
@@ -70,7 +70,7 @@ func (keypair *SignKeyPair) Marshal() []byte {
 	return r
 }
 
-// Unmarshal d into keypair
+// Unmarshal d into keypair.
 func (keypair SignKeyPair) Unmarshal(d []byte) (*SignKeyPair, error) {
 	kp := new(SignKeyPair)
 	kp.PublicKey = new([SignerPubKeySize]byte)
@@ -86,7 +86,7 @@ func (keypair SignKeyPair) Unmarshal(d []byte) (*SignKeyPair, error) {
 	return nil, ErrNoKeyFound
 }
 
-// Sign a messageid
+// Sign a messageid.
 func (keypair *SignKeyPair) Sign(msgID [MessageIDSize]byte) *[SignHeaderSize]byte {
 	signHeader := new([SignHeaderSize]byte)
 	signHeader[0] = byte(Version)
@@ -98,7 +98,7 @@ func (keypair *SignKeyPair) Sign(msgID [MessageIDSize]byte) *[SignHeaderSize]byt
 	return signHeader
 }
 
-// SignatureDetails contains the fields of the signature header (minus signature itself)
+// SignatureDetails contains the fields of the signature header (minus signature itself).
 type SignatureDetails struct {
 	MsgID         [MessageIDSize]byte      // MsgID of the message (sha256(KeyHeader|Body))
 	PublicKey     [SignerPubKeySize]byte   // Public key of signer
@@ -106,7 +106,7 @@ type SignatureDetails struct {
 	HashCashBits  byte                     // HashCash bits
 }
 
-// VerifySignature verifies a signature header. It checks if the version, signatures and hashcash are correct
+// VerifySignature verifies a signature header. It checks if the version, signatures and hashcash are correct.
 func VerifySignature(header [SignHeaderSize]byte, minbits byte) (details *SignatureDetails, err error) {
 	var ok bool
 	if header[0] != byte(Version) {

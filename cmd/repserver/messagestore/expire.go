@@ -113,7 +113,7 @@ func (store Store) ExpireFromIndex(cycles int) {
 					}
 					if entryStruct.ExpireTime > now {
 						log.Debugf("Expire index bad entry not expired: %d %d\n", j, expireTime)
-						continue //bad entry
+						continue // bad entry
 					}
 					store.messages.Index(entryStruct.MessageID[:]).Delete() // Delete message
 					store.signers.Index(entryStruct.SignerPubKey[:]).Update(func(tx fileback.Tx) error {

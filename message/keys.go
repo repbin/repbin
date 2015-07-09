@@ -39,28 +39,28 @@ import (
 )
 
 var (
-	// ErrIncompleteKeyPack is returned if a KeyPack cannot be filled
+	// ErrIncompleteKeyPack is returned if a KeyPack cannot be filled.
 	ErrIncompleteKeyPack = errors.New("message: incomplete keypack")
-	// ErrMissingKey is returned if too few keys are used fro keypack construction
+	// ErrMissingKey is returned if too few keys are used fro keypack construction.
 	ErrMissingKey = errors.New("message: missing temporary pubkey")
 )
 
 const (
-	// Curve25519KeySize defines how big a curve25519 key is
+	// Curve25519KeySize defines how big a curve25519 key is.
 	Curve25519KeySize = 32
-	// SharedKeySize defines how long the shared secret is
+	// SharedKeySize defines how long the shared secret is.
 	SharedKeySize = 64
-	// HMACKeySize is the size of the HMAC key
+	// HMACKeySize is the size of the HMAC key.
 	HMACKeySize = 32
-	// SymmetricKeySize is the size of the symmetric encryption key (for AES-CTR)
+	// SymmetricKeySize is the size of the symmetric encryption key (for AES-CTR).
 	SymmetricKeySize = 32
-	// NonceSize bytes of nonce
+	// NonceSize bytes of nonce.
 	NonceSize = 32
-	// PadKeySize is the size of the padding key
+	// PadKeySize is the size of the padding key.
 	PadKeySize = 32
-	// HMACSize is the size of the hmac output, we're using SHA256
+	// HMACSize is the size of the hmac output, we're using SHA256.
 	HMACSize = 32
-	// IVSize defines the length of the IV, calculated by hashing pubkeys and nonce
+	// IVSize defines the length of the IV, calculated by hashing pubkeys and nonce.
 	IVSize = aes.BlockSize
 )
 
@@ -77,18 +77,18 @@ var (
 
 var randSource = rand.Reader
 
-// Curve25519Key is a curve25519 public or private key
+// Curve25519Key is a curve25519 public or private key.
 type Curve25519Key [Curve25519KeySize]byte
 
-// KeyPack contains one side of keys
+// KeyPack contains one side of keys.
 type KeyPack struct {
-	ConstantPubKey   *Curve25519Key // Public key: SenderConstantPubKey
-	ConstantPrivKey  *Curve25519Key // Private key of ConstantPubKey
-	TemporaryPubKey  *Curve25519Key // Public key: SenderTemporaryPubKey
-	TemporaryPrivKey *Curve25519Key // Private key of TemporaryPubKey
+	ConstantPubKey   *Curve25519Key // Public key: SenderConstantPubKey.
+	ConstantPrivKey  *Curve25519Key // Private key of ConstantPubKey.
+	TemporaryPubKey  *Curve25519Key // Public key: SenderTemporaryPubKey.
+	TemporaryPrivKey *Curve25519Key // Private key of TemporaryPubKey.
 }
 
-// scalarBaseMult is a wrapper around curve25519.ScalarBaseMult with type conversion
+// scalarBaseMult is a wrapper around curve25519.ScalarBaseMult with type conversion.
 func scalarBaseMult(dst, in *Curve25519Key) {
 	curve25519.ScalarBaseMult((*[Curve25519KeySize]byte)(dst), (*[Curve25519KeySize]byte)(in))
 }
@@ -97,7 +97,7 @@ func scalarMult(dst, in, base *Curve25519Key) {
 	curve25519.ScalarMult((*[Curve25519KeySize]byte)(dst), (*[Curve25519KeySize]byte)(in), (*[Curve25519KeySize]byte)(base))
 }
 
-// FillKeys constructs missing keys in a KeyPack. If deterministic==true then temporary keys are generated from the constant keys
+// FillKeys constructs missing keys in a KeyPack. If deterministic==true then temporary keys are generated from the constant keys.
 func (kp *KeyPack) FillKeys(deterministic bool) error {
 	// Create private keys if constant public key is nil
 	if kp.ConstantPrivKey == nil && kp.ConstantPubKey == nil {
@@ -141,7 +141,7 @@ func (kp *KeyPack) FillKeys(deterministic bool) error {
 }
 
 // GenKeyPack generate a keypack. If privateConstant is nil, all keys will be ephemeral.
-// If deterministic is true then the temporaryPrivKey will be generated from the constantPrivKey
+// If deterministic is true then the temporaryPrivKey will be generated from the constantPrivKey.
 func GenKeyPack(privateConstant *Curve25519Key, deterministic bool) (*KeyPack, error) {
 	kp := new(KeyPack)
 	kp.ConstantPrivKey = privateConstant
@@ -152,14 +152,14 @@ func GenKeyPack(privateConstant *Curve25519Key, deterministic bool) (*KeyPack, e
 	return kp, nil
 }
 
-// GenSenderKeys returns a keypack suitable for the sender. If PrivateConstant is nil, all keys will be ephemeral
+// GenSenderKeys returns a keypack suitable for the sender. If PrivateConstant is nil, all keys will be ephemeral.
 func GenSenderKeys(privateConstant *Curve25519Key) (*KeyPack, error) {
 	return GenKeyPack(privateConstant, false)
 }
 
-// GenLongTermKey returns a private key that is meant for long-term use and adheres to the hidden index rule
-// hidden means that the server should not allow index access without authentication
-// sync means that the server should not sync the message to other servers (it is not part of the global index)
+// GenLongTermKey returns a private key that is meant for long-term use and adheres to the hidden index rule.
+// hidden means that the server should not allow index access without authentication.
+// sync means that the server should not sync the message to other servers (it is not part of the global index).
 func GenLongTermKey(hidden bool, sync bool) (*Curve25519Key, error) {
 	var priv, pub Curve25519Key
 	for {
@@ -176,7 +176,7 @@ func GenLongTermKey(hidden bool, sync bool) (*Curve25519Key, error) {
 	}
 }
 
-// GenRandomKey generates a random key useable for temporary keys
+// GenRandomKey generates a random key useable for temporary keys.
 func GenRandomKey() (*Curve25519Key, error) {
 	var priv Curve25519Key
 	_, err := io.ReadFull(randSource, priv[:])
@@ -186,31 +186,31 @@ func GenRandomKey() (*Curve25519Key, error) {
 	return &priv, nil
 }
 
-// GenPubKey calculates the public key for a private key
+// GenPubKey calculates the public key for a private key.
 func GenPubKey(priv *Curve25519Key) *Curve25519Key {
 	pub := new(Curve25519Key)
 	scalarBaseMult(pub, priv)
 	return pub
 }
 
-// KeyIsHidden returns true if key index should be hidden
+// KeyIsHidden returns true if key index should be hidden.
 func KeyIsHidden(k *Curve25519Key) bool {
 	return k[0]&hiddenbit == hiddenbit
 }
 
-// KeyIsSync returns true if messages for this key should be synced
+// KeyIsSync returns true if messages for this key should be synced.
 func KeyIsSync(k *Curve25519Key) bool {
 	return k[0]&syncbit == syncbit
 }
 
-// CalcPub generates a public key from a private key
+// CalcPub generates a public key from a private key.
 func CalcPub(privateKey *Curve25519Key) *Curve25519Key {
 	var pub Curve25519Key
 	scalarBaseMult(&pub, privateKey)
 	return &pub
 }
 
-// GenReceiveKeys generates a KeyPack for the recipient unless public keys are available
+// GenReceiveKeys generates a KeyPack for the recipient unless public keys are available.
 func GenReceiveKeys(publicConstant, publicTemporary *Curve25519Key) (*KeyPack, error) {
 	if publicConstant == nil {
 		return GenKeyPack(nil, true)
@@ -224,7 +224,7 @@ func GenReceiveKeys(publicConstant, publicTemporary *Curve25519Key) (*KeyPack, e
 	return keys, nil
 }
 
-// GenNonce returns NonceSize random bytes
+// GenNonce returns NonceSize random bytes.
 func GenNonce() (*[NonceSize]byte, error) {
 	nonce := new([NonceSize]byte)
 	_, err := io.ReadFull(randSource, nonce[:])
@@ -235,7 +235,7 @@ func GenNonce() (*[NonceSize]byte, error) {
 }
 
 // CalcSharedSecret does a triple DH from the keypacks to generate the shared secret. myKeys needs to contain private keys, peerKeys only needs public keys
-// Sending determines if one is sender or recipient of a message
+// Sending determines if one is sender or recipient of a message.
 func CalcSharedSecret(myKeys, peerKeys *KeyPack, nonce *[NonceSize]byte, sending bool) (sharedSecret [SharedKeySize]byte) {
 	preKey := make([]byte, 3*Curve25519KeySize+NonceSize) // three keys plus nonce
 	key1, key2, key3 := new(Curve25519Key), new(Curve25519Key), new(Curve25519Key)
@@ -265,7 +265,7 @@ func CalcSharedSecret(myKeys, peerKeys *KeyPack, nonce *[NonceSize]byte, sending
 	return sha512.Sum512(preKey)
 }
 
-// CalcKeys generates the keys for hmac calculation and symmetric encryption from the shared secret
+// CalcKeys generates the keys for hmac calculation and symmetric encryption from the shared secret.
 func CalcKeys(sharedSecret [SharedKeySize]byte) (hmacKey *[HMACKeySize]byte, symmetricKey *[SymmetricKeySize]byte) {
 	var hmacres, symmres []byte
 	hmaccalc := hmac.New(sha256.New, sharedSecret[:])
@@ -284,7 +284,7 @@ func CalcKeys(sharedSecret [SharedKeySize]byte) (hmacKey *[HMACKeySize]byte, sym
 	return
 }
 
-// GenIV generates the IV by sha256 d. d should be the slice containing the pubkeys and nonce from the message
+// GenIV generates the IV by sha256 d. d should be the slice containing the pubkeys and nonce from the message.
 func GenIV(d []byte) *[IVSize]byte {
 	var iv [IVSize]byte
 	if d == nil { // this guarantees that the message will never be decrypted outside of tests
@@ -299,7 +299,7 @@ func GenIV(d []byte) *[IVSize]byte {
 	return &iv
 }
 
-// MatchPrivate tries to match given private key(s) to the KeyPack. Keys will be added to the keypack if a match is found
+// MatchPrivate tries to match given private key(s) to the KeyPack. Keys will be added to the keypack if a match is found.
 func (kp *KeyPack) MatchPrivate(constantPrivKey, temporaryPrivKey *Curve25519Key) bool {
 	var constantPubKey, temporaryPubKey Curve25519Key
 	scalarBaseMult(&constantPubKey, constantPrivKey)

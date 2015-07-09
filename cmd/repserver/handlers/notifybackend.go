@@ -150,7 +150,7 @@ func (ms MessageServer) notifyPeer(PubKey *[ed25519.PublicKeySize]byte, url stri
 	}
 	now := time.Now().Unix() + ms.TimeSkew
 	token := utils.B58encode(keyproof.SignProofToken(now, PubKey, ms.TokenPubKey, ms.TokenPrivKey)[:])
-	//Socks call
+	// Socks call
 	proto := repproto.New(ms.SocksProxy, "")
 	err := proto.Notify(url, token)
 	// Write result

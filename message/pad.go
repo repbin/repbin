@@ -8,7 +8,7 @@ import (
 	log "github.com/repbin/repbin/deferconsole"
 )
 
-// GenPadKey generates a random value suitable for the padding generator
+// GenPadKey generates a random value suitable for the padding generator.
 func GenPadKey() (*[PadKeySize]byte, error) {
 	var k [PadKeySize]byte
 	_, err := io.ReadFull(randSource, k[:])
@@ -18,7 +18,7 @@ func GenPadKey() (*[PadKeySize]byte, error) {
 	return &k, nil
 }
 
-// GenPad produces a slice of bytes with length int, filled with pseudo-random numbers generated from key using AES-CTR
+// GenPad produces a slice of bytes with length int, filled with pseudo-random numbers generated from key using AES-CTR.
 func GenPad(key *[PadKeySize]byte, length int) []byte {
 	blockcipher, err := aes.NewCipher(key[:])
 	if err != nil {
@@ -30,7 +30,7 @@ func GenPad(key *[PadKeySize]byte, length int) []byte {
 	return in[0:length]
 }
 
-// RePad adds the deterministic padding to a message
+// RePad adds the deterministic padding to a message.
 func RePad(msg []byte, padKey *[PadKeySize]byte, totalLength int) []byte {
 	msgLen := len(msg)
 	padLen := totalLength - msgLen

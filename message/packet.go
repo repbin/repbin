@@ -48,62 +48,62 @@ import (
 )
 
 var (
-	// ErrTooLong is returned if the message body is too big
+	// ErrTooLong is returned if the message body is too big.
 	ErrTooLong = errors.New("message: Content too long")
-	// ErrTooShort is returned if the message is smaller than allowed
+	// ErrTooShort is returned if the message is smaller than allowed.
 	ErrTooShort = errors.New("message: Message too short")
-	// ErrBadHMAC is returned if the HMAC does not verify
+	// ErrBadHMAC is returned if the HMAC does not verify.
 	ErrBadHMAC = errors.New("message: Bad HMAC")
 )
 
 const (
-	// MsgTypeBlob signals a standard blob of data without special meaning
+	// MsgTypeBlob signals a standard blob of data without special meaning.
 	MsgTypeBlob = 0x01
-	// MsgTypeList signals a list of other messages
+	// MsgTypeList signals a list of other messages.
 	MsgTypeList = 0x02
-	// MsgTypeRepost signals a message that is sent to a reposter
+	// MsgTypeRepost signals a message that is sent to a reposter.
 	MsgTypeRepost = 0x03
 )
 
 const (
-	// BodyMaxLength is the maximum length of the body that can be accepted
+	// BodyMaxLength is the maximum length of the body that can be accepted.
 	BodyMaxLength = 65535
-	// MessageIDSize is the size of a MessageID
+	// MessageIDSize is the size of a MessageID.
 	MessageIDSize = sha256.Size
-	// SignHeaderSize is the size of the signature header
+	// SignHeaderSize is the size of the signature header.
 	SignHeaderSize = 1 + ed25519.PublicKeySize + ed25519.SignatureSize + MessageIDSize + hashcash.NonceSize
-	// KeyHeaderSize is the size of the key header (four curve25519 public keys for DH and nonce)
+	// KeyHeaderSize is the size of the key header (four curve25519 public keys for DH and nonce).
 	KeyHeaderSize       = 4*Curve25519KeySize + NonceSize
 	encryptedHeaderSize = 3
-	// Version of this protocol
+	// Version of this protocol.
 	Version = 0x01
 )
 
-// DecryptBodyDef contains parameters for decryption
+// DecryptBodyDef contains parameters for decryption.
 type DecryptBodyDef struct {
-	IV           [IVSize]byte        // The IV to use. This is overkill since the key is unique anyways... anyways
-	SharedSecret [SharedKeySize]byte // The shared secret, calculate HMAC and Symmetric Key from this
+	IV           [IVSize]byte        // The IV to use. This is overkill since the key is unique anyways... anyways.
+	SharedSecret [SharedKeySize]byte // The shared secret, calculate HMAC and Symmetric Key from this.
 }
 
-// EncryptBodyDef contains parameters for body encryption
+// EncryptBodyDef contains parameters for body encryption.
 type EncryptBodyDef struct {
-	IV           [IVSize]byte        // The IV to use. This is overkill since the key is unique anyways... anyways
-	SharedSecret [SharedKeySize]byte // The shared secret, calculate HMAC and Symmetric Key from this
-	TotalLength  int                 // Total size of body including padding
-	PadToLength  int                 // PadToLength will pad the body to PadToLength size of random padding before adding deterministic padding, if any
+	IV           [IVSize]byte        // The IV to use. This is overkill since the key is unique anyways... anyways.
+	SharedSecret [SharedKeySize]byte // The shared secret, calculate HMAC and Symmetric Key from this.
+	TotalLength  int                 // Total size of body including padding.
+	PadToLength  int                 // PadToLength will pad the body to PadToLength size of random padding before adding deterministic padding, if any.
 	MessageType  byte
 }
 
-// EncryptedBody contains the restuls of an encryption or parsing
+// EncryptedBody contains the restuls of an encryption or parsing.
 type EncryptedBody struct {
-	Encrypted            []byte           // First element
-	RandomPadding        []byte           // Second element
-	DeterministicPadding []byte           // Third element
-	PadKey               [PadKeySize]byte // Will be set if deterministic padding is appended
-	HMACSum              [HMACSize]byte   // The HMAC
+	Encrypted            []byte           // First element.
+	RandomPadding        []byte           // Second element.
+	DeterministicPadding []byte           // Third element.
+	PadKey               [PadKeySize]byte // Will be set if deterministic padding is appended.
+	HMACSum              [HMACSize]byte   // The HMAC.
 }
 
-// EncryptBody takes data and creates a body out of it
+// EncryptBody takes data and creates a body out of it.
 func (bd *EncryptBodyDef) EncryptBody(data []byte) (*EncryptedBody, error) {
 	var detSize int
 	dataLen := len(data)
@@ -172,7 +172,7 @@ func (bd *EncryptBodyDef) EncryptBody(data []byte) (*EncryptedBody, error) {
 	return eBody, nil
 }
 
-// DecryptBody decrypts a body and verifies the hmac
+// DecryptBody decrypts a body and verifies the hmac.
 func (bd *DecryptBodyDef) DecryptBody(data []byte) ([]byte, byte, error) {
 	var content []byte
 	log.Secretf("Shared Secret: %x\n", bd.SharedSecret)
@@ -209,13 +209,13 @@ func (bd *DecryptBodyDef) DecryptBody(data []byte) ([]byte, byte, error) {
 		// Decrypt whatever is left
 		ctr.XORKeyStream(content, data[aes.BlockSize:aes.BlockSize+nlength])
 	}
-	//Concat both reads
+	// Concat both reads
 	content = append(header, content...)
 	// Only return after header til end of message
 	return content[encryptedHeaderSize : length+encryptedHeaderSize], msgType, nil
 }
 
-// Bytes returns the body as byteslice
+// Bytes returns the body as byteslice.
 func (eb EncryptedBody) Bytes() []byte {
 	var out []byte
 	out = append(out, eb.Encrypted...)
@@ -229,7 +229,7 @@ func (eb EncryptedBody) Bytes() []byte {
 	return out
 }
 
-// BytesNoPadding returns the body as byteslice omitting deterministic padding
+// BytesNoPadding returns the body as byteslice omitting deterministic padding.
 func (eb EncryptedBody) BytesNoPadding() []byte {
 	var out []byte
 	out = append(out, eb.Encrypted...)
@@ -251,7 +251,7 @@ func PackKeyHeader(senderKeys, peerKeys *KeyPack, nonce *[NonceSize]byte) *[KeyH
 	return &res
 }
 
-// ParseKeyHeader returns the KeyPacks and Nonce of a KeyHeader
+// ParseKeyHeader returns the KeyPacks and Nonce of a KeyHeader.
 func ParseKeyHeader(keyHeader *[KeyHeaderSize]byte) (senderKeys, peerKeys *KeyPack, nonce *[NonceSize]byte) {
 	senderKeys, peerKeys = new(KeyPack), new(KeyPack)
 	senderKeys.ConstantPubKey = new(Curve25519Key)
@@ -267,14 +267,14 @@ func ParseKeyHeader(keyHeader *[KeyHeaderSize]byte) (senderKeys, peerKeys *KeyPa
 	return
 }
 
-// Message is a full message
+// Message is a full message.
 type Message struct {
-	SignatureHeader *[SignHeaderSize]byte // Packet signature header
-	Header          *[KeyHeaderSize]byte  // Packed message header
-	Body            []byte                // Unpacked body
+	SignatureHeader *[SignHeaderSize]byte // Packet signature header.
+	Header          *[KeyHeaderSize]byte  // Packed message header.
+	Body            []byte                // Unpacked body.
 }
 
-// ParseMessage cuts a byteslice into a Message struct
+// ParseMessage cuts a byteslice into a Message struct.
 func ParseMessage(msg []byte) (*Message, error) {
 	if len(msg) < SignHeaderSize+KeyHeaderSize+1 {
 		return nil, ErrTooShort
@@ -289,7 +289,7 @@ func ParseMessage(msg []byte) (*Message, error) {
 	return m, nil
 }
 
-// Bytes converts a message struct into a byte slice
+// Bytes converts a message struct into a byte slice.
 func (msg Message) Bytes() []byte {
 	ret := make([]byte, 0, SignHeaderSize+KeyHeaderSize+len(msg.Body))
 	ret = append(ret, msg.SignatureHeader[:]...)
@@ -298,7 +298,7 @@ func (msg Message) Bytes() []byte {
 	return ret
 }
 
-// CalcMessageID from encrypted body
+// CalcMessageID from encrypted body.
 func (msg Message) CalcMessageID() *[MessageIDSize]byte {
 	var ret [MessageIDSize]byte
 	h := sha256.New()
@@ -309,7 +309,7 @@ func (msg Message) CalcMessageID() *[MessageIDSize]byte {
 	return &ret
 }
 
-// CalcMessageID from raw message (skip signature part)
+// CalcMessageID from raw message (skip signature part).
 func CalcMessageID(msg []byte) *[MessageIDSize]byte {
 	var ret [MessageIDSize]byte
 	h := sha256.New()

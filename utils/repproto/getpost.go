@@ -267,7 +267,7 @@ type ServerInfo struct {
 	AuthPubKey      string
 	AuthChallenge   string
 	MaxPostSize     int64    // Maximum post size
-	MinPostSize     int      //Minimum post size
+	MinPostSize     int      // Minimum post size
 	MinHashCashBits byte     // Minimum hashcash bits required
 	Peers           []string // Peers of the server, if any
 }

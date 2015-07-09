@@ -118,7 +118,7 @@ func CmdDecrypt() int {
 		return 0
 	}
 	decMessage = decMessage[message.Curve25519KeySize*2:]
-	//meta.MessageType
+	// meta.MessageType
 	if meta.MessageType == message.MsgTypeRepost {
 		log.Datas("STATUS (Process):\tREPOST\n")
 		// If messageType repost: get padkey,mindelay,maxdelay. Repad
