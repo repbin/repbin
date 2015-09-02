@@ -32,16 +32,16 @@ func init() {
 
 // MaxRead reads n bytes from r. If more bytes are available, return ErrMaxBytes
 func MaxRead(n int64, r io.Reader) ([]byte, error) {
-	limitReader := io.LimitReader(r, n)
-	ret, err := ioutil.ReadAll(limitReader)
-	if err != nil {
+	d := make([]byte, n)
+	rn, err := r.Read(d)
+	if err != nil && err != io.EOF {
 		return nil, err
 	}
-	nr, err := r.Read(make([]byte, 1))
-	if nr > 0 || err == nil {
+	_, err = r.Read(make([]byte, 1))
+	if err != io.EOF {
 		return nil, ErrMaxBytes
 	}
-	return ret, nil
+	return d[:rn], nil
 }
 
 // MaxReadFile reads a file into []byte
