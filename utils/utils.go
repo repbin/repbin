@@ -30,18 +30,37 @@ func init() {
 	rand.Read(secret[:])
 }
 
+// MaxReadTTY reads n bytes from r. If more bytes are available, return ErrMaxBytes
+func MaxReadTTY(n int64, r io.Reader) ([]byte, error) {
+	d := make([]byte, n+1)
+	xn := 0
+	for {
+		rn, err := r.Read(d[xn:])
+		if err != nil {
+			if err != io.EOF {
+				return nil, err
+			}
+			return d[:xn], nil
+		}
+		xn += rn
+		if int64(xn) > n {
+			return nil, ErrMaxBytes
+		}
+	}
+}
+
 // MaxRead reads n bytes from r. If more bytes are available, return ErrMaxBytes
 func MaxRead(n int64, r io.Reader) ([]byte, error) {
-	d := make([]byte, n)
-	rn, err := r.Read(d)
-	if err != nil && err != io.EOF {
+	limitReader := io.LimitReader(r, n)
+	ret, err := ioutil.ReadAll(limitReader)
+	if err != nil {
 		return nil, err
 	}
-	_, err = r.Read(make([]byte, 1))
-	if err != io.EOF {
+	nr, err := r.Read(make([]byte, 1))
+	if nr > 0 || err == nil {
 		return nil, ErrMaxBytes
 	}
-	return d[:rn], nil
+	return ret, nil
 }
 
 // MaxReadFile reads a file into []byte
@@ -60,7 +79,7 @@ func MaxReadFile(n int64, filename string) ([]byte, error) {
 
 // MaxStdinRead reads n bytes from stdin. If more bytes are available, return ErrMaxBytes
 func MaxStdinRead(n int64) ([]byte, error) {
-	return MaxRead(n, os.Stdin)
+	return MaxReadTTY(n, os.Stdin)
 }
 
 // WriteStdout writes b to stdout
