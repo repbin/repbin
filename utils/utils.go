@@ -14,7 +14,7 @@ import (
 )
 
 // Version of this release
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 var (
 	// ErrMaxBytes is returned if too many bytes are available

@@ -1,0 +1,77 @@
+Tables:
+-------
+
+- Message (uint64: BIGINT UNSIGNED )
+// MessageStruct describes a message
+type MessageStruct struct {
+    Counter                uint64                         // is zero unless from a list
+    PostTime               uint64                         // When was the message posted
+    ExpireTime             uint64                         // When does the message expire. Calculate from ExpireRequest
+    ExpireRequest          uint64                         // Requested expire time
+    MessageID              [message.MessageIDSize]byte    // The messageID
+    ReceiverConstantPubKey message.Curve25519Key          // The ReceiverConstantPubKey
+    SignerPub              [message.SignerPubKeySize]byte // The Signer Pubkey
+    Distance               uint64                         // The distance to origin. Increased by one when fetching
+    OneTime                bool                           // Mark message as one-time. Message is deleted on fetch
+    Sync                   bool                           // Message will be synced (0x00==no,0x01==yes)
+    Hidden                 bool                           // Message is hidden (0x00==no,0x01==yes)
+}
+
+- Signer
+// SignerStruct describes a signer
+type SignerStruct struct {
+    PublicKey           [message.SignerPubKeySize]byte // Public key of signer
+    Nonce               [hashcash.NonceSize]byte       // HashCash nonce
+    Bits                byte                           // Hashcash bits. Verified
+    MessagesPosted      uint64                         // Total messages posted, always increment
+    MessagesRetained    uint64                         // Messages retained
+    MaxMessagesPosted   uint64                         // Maximum messages that may be posted
+    MaxMessagesRetained uint64                         // Maximum messages that may be retained
+    ExpireTarget        uint64                         // Calculated from Bits
+}
+
+- Peer
+// PeerStruct represents a peer
+type PeerStruct struct {
+    AuthToken      [keyproof.ProofTokenSignedSize]byte // Keyproof token, countersigned
+    LastNotifySend uint64                              // When did we send a notify last
+    LastNotifyFrom uint64                              // When did we receive a notify last
+    LastFetch      uint64                              // When did we last fetch from this peer
+    ErrorCount     uint64                              // Number of errors occured
+    LastPosition   uint64                              // Last successful position in download
+}
+
+- GlobalIndex
+  AutoIncr, ForeignKey Message, entrytime
+- KeyIndex
+  From messageStore. Add KeyCounter
+
+
+Signer:
+    ok: Insert (counters++)
+    ok: Select
+    ok: Update
+    ok: AddMessage
+    ok: DelMessage
+    ok: trackExpire
+    
+Message:
+    ok: Insert: Correct keyindex (mutex, index expire)
+    ok: KeyIndex: Append (ID++)
+    ok: Select MessageID
+    ok: Select Expire
+    ok: Update Expire
+    ok: Delete Expire
+    ok: Delete MessageID
+    ok: Select key, start->count
+
+GlobalIndex:
+    ok: Insert/Append (ID++)
+    ok: Select start->count
+
+Peers: 
+    ok: Touch -> Insert
+    ok: Update FetchStats
+    ok: Update Notification
+    ok: Select by pubkey
+    ok: Update Authtoken
