@@ -16,6 +16,9 @@ func (db *MessageDB) InsertPeer(pubkey *[ed25519.PublicKeySize]byte) error {
 }
 
 func (db *MessageDB) suppressDuplicateError(err error) error {
+	if err == nil {
+		return nil
+	}
 	if db.driver == "mysql" {
 		if err.Error()[0:27] == "Error 1062: Duplicate entry" {
 			return nil
