@@ -69,7 +69,11 @@ type MessageDB struct {
 	messageBlobDeleteQ     *sql.Stmt
 }
 
-// New returns a new message database
+// New returns a new message database. driver is the database driver to use,
+// url the database url. dir is the optional directory in which to store the
+// raw message blobs. If dir is empty blobs will be stored in the database (which
+// may not be a good idea at all). Shards is the number of lock shards to use
+// for sequence generation (memory/lock-probability tradeoff)
 func New(driver, url, dir string, shards uint64) (*MessageDB, error) {
 	var db *sql.DB
 	var err error

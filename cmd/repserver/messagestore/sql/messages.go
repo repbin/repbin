@@ -75,12 +75,12 @@ func (db *MessageDB) InsertMessage(msg *structs.MessageStruct) (uint64, error) {
 	return uint64(n), nil
 }
 
-// ScanAble is an interface that describes both sql.Row as well as sql.Rows (note the s)
-type ScanAble interface {
+// scanAble is an interface that describes both sql.Row as well as sql.Rows (note the s)
+type scanAble interface {
 	Scan(dest ...interface{}) error
 }
 
-func scanMessage(a ScanAble) (uint64, *structs.MessageStruct, error) {
+func scanMessage(a scanAble) (uint64, *structs.MessageStruct, error) {
 	var messageIDT, receiverConstantPubKeyT, signerPubT string
 	var oneTimeT, syncT, hiddenT int
 	var id uint64
