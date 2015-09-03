@@ -9,8 +9,8 @@ import (
 
 	"github.com/repbin/repbin/cmd/repserver/handlers"
 	"github.com/repbin/repbin/cmd/repserver/messagestore"
+	"github.com/repbin/repbin/cmd/repserver/messagestore/sql"
 	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/hashcash"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
@@ -18,10 +18,13 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto"
 	"github.com/repbin/repbin/utils/repproto/structs"
+
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // Version of this release
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 var (
 	start *bool
@@ -39,8 +42,8 @@ func init() {
 	if *version {
 		fmt.Printf("Repserver: %s\n", Version)
 		fmt.Printf("MessageStore: %s\n", messagestore.Version)
+		fmt.Printf("SQL Store: %s\n", sql.Version)
 		fmt.Printf("Handlers: %s\n", handlers.Version)
-		fmt.Printf("FileBack: %s\n", fileback.Version)
 		fmt.Printf("HashCash: %s\n", hashcash.Version)
 		fmt.Printf("Utils: %s\n", utils.Version)
 		fmt.Printf("KeyAuth: %s\n", keyauth.Version)
@@ -73,7 +76,6 @@ func init() {
 	}
 }
 
-// This is just for testing
 func main() {
 	var pubKey, privKey []byte
 	pubKey, privKey = nil, nil
@@ -90,7 +92,7 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU() - 1)
 
-	ms, err := handlers.New(defaultSettings.StoragePath, pubKey, privKey)
+	ms, err := handlers.New(defaultSettings.DBDriver, defaultSettings.DBURL, defaultSettings.StoragePath, pubKey, privKey)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
 		os.Exit(1)

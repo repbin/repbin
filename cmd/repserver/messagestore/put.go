@@ -4,15 +4,14 @@ import (
 	"time"
 
 	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/message"
-	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/repproto/structs"
 )
 
 // MessageExists returns true if the message exists
 func (store Store) MessageExists(messageID [message.MessageIDSize]byte) bool {
-	if store.messages.Index(messageID[:]).Exists() {
+	_, s, err := store.db.SelectMessageByID(&messageID)
+	if err == nil && s != nil {
 		return true
 	}
 	return false
@@ -25,7 +24,7 @@ func (store Store) Put(msgStruct *structs.MessageStruct, signerStruct *structs.S
 		return ErrDuplicate
 	}
 	// Check if signer exists, load last from signer
-	signerLoaded := structs.SignerStructDecode(store.signers.Index(signerStruct.PublicKey[:]).GetLast())
+	_, signerLoaded, _ := store.db.SelectSigner(&signerStruct.PublicKey)
 	if signerLoaded != nil {
 		// Old signer is better
 		if signerLoaded.Bits > signerStruct.Bits {
@@ -52,57 +51,26 @@ func (store Store) Put(msgStruct *structs.MessageStruct, signerStruct *structs.S
 		msgStruct.ExpireTime = msgStruct.ExpireRequest
 	}
 	// Update signer
-	err := store.signers.Index(signerStruct.PublicKey[:]).CreateAppend(signerStruct.Encode()) // Ignore errors on signer update. They don't matter much
+	err := store.db.InsertOrUpdateSigner(signerStruct)
 	if err != nil {
 		log.Errorf("messagestore, update signer: %s", err)
 	}
 	// Write message. Message is prefixed by encoded messageStruct
-	msgStructEncoded := msgStruct.Encode().Fill()
-	err = store.messages.Index(msgStruct.MessageID[:]).Create(append(msgStructEncoded, message...))
+	storeID, err := store.db.InsertMessage(msgStruct)
 	if err != nil {
-		log.Errorf("messagestore, write message: %s", err)
+		log.Errorf("messagestore, write message (DB): %s", err)
+		return err
+	}
+	err = store.db.InsertBlob(storeID, &msgStruct.MessageID, &signerStruct.PublicKey, msgStruct.OneTime, message)
+	if err != nil {
+		log.Errorf("messagestore, write message (Blob): %s", err)
 		return err
 	}
 	if !msgStruct.OneTime && msgStruct.Sync {
-		// TX: Add to global index
-		if store.keyindex.Index(globalindex).Exists() {
-			err := store.keyindex.Index(globalindex).Update(func(tx fileback.Tx) error { // Ignore errors
-				return updateKeyIndex(tx, msgStruct, msgStructEncoded)
-			})
-			if err != nil {
-				log.Errorf("messagestore, globalindex append: %s", err)
-			}
-		} else {
-			err := store.keyindex.Index(globalindex).CreateAppend(msgStructEncoded)
-			if err != nil {
-				log.Errorf("messagestore, globalindex createAppend: %s", err)
-			}
-		}
-	}
-	// TX: Add to key index
-	if store.keyindex.Index(msgStruct.ReceiverConstantPubKey[:]).Exists() {
-		err := store.keyindex.Index(msgStruct.ReceiverConstantPubKey[:]).Update(func(tx fileback.Tx) error { // Ignore errors
-			return updateKeyIndex(tx, msgStruct, msgStructEncoded)
-		})
+		err := store.db.AddToGlobalIndex(storeID)
 		if err != nil {
-			log.Errorf("messagestore, receiverPub append: %s", err)
+			log.Errorf("messagestore, globalindex append: %s", err)
 		}
-	} else {
-		err := store.keyindex.Index(msgStruct.ReceiverConstantPubKey[:]).CreateAppend(msgStructEncoded)
-		if err != nil {
-			log.Errorf("messagestore, receiverPub createAppend: %s", err)
-		}
-	}
-	// Add to expire
-	expire := &structs.ExpireStruct{
-		ExpireTime:   msgStruct.ExpireTime,
-		MessageID:    msgStruct.MessageID,
-		SignerPubKey: msgStruct.SignerPub,
-	}
-	expireTime := (msgStruct.ExpireTime / uint64(ExpireRun)) + uint64(ExpireRun)
-	err = store.expireindex.Index(utils.EncodeUInt64(expireTime)).CreateAppend(expire.Encode().Fill())
-	if err != nil {
-		log.Errorf("messagestore, record expire: %s", err)
 	}
 	return nil
 }
@@ -115,24 +83,4 @@ func (store Store) PutNotify(msgStruct *structs.MessageStruct, signerStruct *str
 	}
 	notifyChan <- true
 	return nil
-}
-
-// updateKeyIndex updates a key index by writing the new struct with an increased counter
-func updateKeyIndex(tx fileback.Tx, msgStruct *structs.MessageStruct, msgStructEncoded structs.MessageStructEncoded) error { // Ignore errors
-	prev := tx.GetLast()
-	if prev == nil {
-		log.Errors("messagestore, globalindex getLast: NIL")
-		err := tx.Append(msgStructEncoded)
-		return err
-	}
-	prevStr := structs.MessageStructDecode(prev)
-	if prevStr == nil {
-		log.Errors("messagestore, globalindex decode: NIL")
-		err := tx.Append(msgStructEncoded)
-		return err
-	}
-	msgStruct.Counter = prevStr.Counter + 1 // Increase counter
-	msgStructEncoded = msgStruct.Encode().Fill()
-	err := tx.Append(msgStructEncoded)
-	return err
 }

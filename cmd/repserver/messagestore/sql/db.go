@@ -18,6 +18,9 @@ import (
 	"github.com/repbin/repbin/utils/keyproof"
 )
 
+// Version of this release
+const Version = "0.0.1 very alpha"
+
 var shardRand = make([]byte, 16)
 
 func init() {
@@ -74,7 +77,7 @@ type MessageDB struct {
 // raw message blobs. If dir is empty blobs will be stored in the database (which
 // may not be a good idea at all). Shards is the number of lock shards to use
 // for sequence generation (memory/lock-probability tradeoff)
-func New(driver, url, dir string, shards uint64) (*MessageDB, error) {
+func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	var db *sql.DB
 	var err error
 	if driver == "sqlite3" {
@@ -85,7 +88,7 @@ func New(driver, url, dir string, shards uint64) (*MessageDB, error) {
 		return nil, err
 	}
 	mdb := &MessageDB{
-		NumShards: shards,
+		NumShards: uint64(shards),
 		queries:   queries[driver],
 		db:        db,
 		dir:       dir,

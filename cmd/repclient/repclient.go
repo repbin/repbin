@@ -17,7 +17,7 @@ import (
 )
 
 // Version of main
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 const defaultBootStrapPeer = "http://mmb4alp3d2vc55op.onion/"
 

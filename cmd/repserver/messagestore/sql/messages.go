@@ -35,8 +35,8 @@ func (db *MessageDB) messageNextCounter(receiver *message.Curve25519Key) (uint64
 
 // ExpireMessageCounter expires all messagecounters (and thus resets key indices) that are older than
 // maxAge seconds
-func (db *MessageDB) ExpireMessageCounter(maxAge uint64) error {
-	expireDate := uint64(time.Now().Unix()) - maxAge
+func (db *MessageDB) ExpireMessageCounter(maxAge int64) error {
+	expireDate := int64(time.Now().Unix()) - maxAge
 	_, err := db.expireMessageCounterQ.Exec(expireDate)
 	return err
 }
