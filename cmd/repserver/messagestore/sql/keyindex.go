@@ -32,7 +32,7 @@ func genIndex(rows *sql.Rows, err error) ([][]byte, int, error) {
 	defer rows.Close()
 	i := 0
 	for rows.Next() {
-		str, err := scanMessage(rows)
+		_, str, err := scanMessage(rows)
 		if err != nil {
 			return nil, 0, err
 		}

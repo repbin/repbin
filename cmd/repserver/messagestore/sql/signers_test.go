@@ -103,7 +103,7 @@ func signerCompare(t *testing.T, id1, id2 int64, baseData, data *structs.SignerS
 
 func TestSignerMysql(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir)
+	db, err := New("mysql", "root:root@/repbin", dir, 100)
 	if err != nil {
 		t.Fatalf("New Mysql: %s", err)
 	}
@@ -166,7 +166,7 @@ func TestSignerMysql(t *testing.T) {
 func TestSignersSQLite(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
 	dbFile := path.Join(os.TempDir(), "db.test-signers")
-	db, err := New("sqlite3", dbFile, dir)
+	db, err := New("sqlite3", dbFile, dir, 100)
 	if err != nil {
 		t.Fatalf("New sqlite3: %s", err)
 	}

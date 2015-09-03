@@ -46,6 +46,18 @@ type PeerStruct struct {
 - KeyIndex
   From messageStore. Add KeyCounter
 
+CREATE TABLE IF NOT EXISTS messageblob (
+MessageID              [message.MessageIDSize]byte
+SignerPub              [message.SignerPubKeySize]byte
+OneTime                bool  
+);
+
+
+messageblob:
+	Put
+	Fetch
+	Expire (foreignkey)
+
 
 Signer:
     ok: Insert (counters++)

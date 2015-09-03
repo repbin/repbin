@@ -64,10 +64,13 @@ type MessageDB struct {
 	globalIndexAddQ        *sql.Stmt
 	getKeyIndexQ           *sql.Stmt
 	getGlobalIndexQ        *sql.Stmt
+	messageBlobInsertQ     *sql.Stmt
+	messageBlobSelectQ     *sql.Stmt
+	messageBlobDeleteQ     *sql.Stmt
 }
 
 // New returns a new message database
-func New(driver, url, dir string) (*MessageDB, error) {
+func New(driver, url, dir string, shards uint64) (*MessageDB, error) {
 	var db *sql.DB
 	var err error
 	if driver == "sqlite3" {
@@ -78,11 +81,14 @@ func New(driver, url, dir string) (*MessageDB, error) {
 		return nil, err
 	}
 	mdb := &MessageDB{
-		NumShards: 100,
+		NumShards: shards,
 		queries:   queries[driver],
 		db:        db,
 		dir:       dir,
 		driver:    driver,
+	}
+	if _, err := mdb.db.Exec(mdb.queries["messageBlobCreate"]); err != nil {
+		return nil, err
 	}
 	if _, err := mdb.db.Exec(mdb.queries["MessageCounterCreate"]); err != nil {
 		return nil, err
@@ -179,13 +185,25 @@ func New(driver, url, dir string) (*MessageDB, error) {
 		return nil, err
 	}
 
+	if mdb.messageBlobInsertQ, err = mdb.db.Prepare(mdb.queries["messageBlobInsert"]); err != nil {
+		return nil, err
+	}
+	if mdb.messageBlobSelectQ, err = mdb.db.Prepare(mdb.queries["messageBlobSelect"]); err != nil {
+		return nil, err
+	}
+	if mdb.messageBlobDeleteQ, err = mdb.db.Prepare(mdb.queries["messageBlobDelete"]); err != nil {
+		return nil, err
+	}
+
 	if driver == "mysql" {
 		if mdb.signerUpdateInsertQ, err = mdb.db.Prepare(mdb.queries["UpdateOrInsertSigner"]); err != nil {
 			return nil, err
 		}
 	}
-	if err := os.MkdirAll(dir, 0700); err != nil {
-		return nil, err
+	if dir != "" {
+		if err := os.MkdirAll(dir, 0700); err != nil {
+			return nil, err
+		}
 	}
 	mdb.setMutexes()
 	return mdb, nil

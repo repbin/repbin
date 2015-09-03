@@ -80,11 +80,13 @@ type ScanAble interface {
 	Scan(dest ...interface{}) error
 }
 
-func scanMessage(a ScanAble) (*structs.MessageStruct, error) {
+func scanMessage(a ScanAble) (uint64, *structs.MessageStruct, error) {
 	var messageIDT, receiverConstantPubKeyT, signerPubT string
 	var oneTimeT, syncT, hiddenT int
+	var id uint64
 	s := new(structs.MessageStruct)
 	if err := a.Scan(
+		&id,
 		&s.Counter,
 		&messageIDT,
 		&receiverConstantPubKeyT,
@@ -97,7 +99,7 @@ func scanMessage(a ScanAble) (*structs.MessageStruct, error) {
 		&syncT,
 		&hiddenT,
 	); err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 	s.MessageID = *sliceToMessageID(fromHex(messageIDT))
 	s.ReceiverConstantPubKey = *sliceToCurve25519Key(fromHex(receiverConstantPubKeyT))
@@ -105,11 +107,11 @@ func scanMessage(a ScanAble) (*structs.MessageStruct, error) {
 	s.OneTime = intToBool(oneTimeT)
 	s.Sync = intToBool(syncT)
 	s.Hidden = intToBool(hiddenT)
-	return s, nil
+	return id, s, nil
 }
 
 // SelectMessageByID returns message data for the messageid
-func (db *MessageDB) SelectMessageByID(mid *[message.MessageIDSize]byte) (*structs.MessageStruct, error) {
+func (db *MessageDB) SelectMessageByID(mid *[message.MessageIDSize]byte) (uint64, *structs.MessageStruct, error) {
 	return scanMessage(db.selectMessageQ.QueryRow(toHex(mid[:])))
 }
 
@@ -150,6 +152,3 @@ func (db *MessageDB) SelectMessageExpire(now int64) ([]ExpireMessage, error) {
 	}
 	return res, nil
 }
-
-// List....
-//     Select key, start->count

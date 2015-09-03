@@ -29,7 +29,7 @@ var testSignedToken = sliceToProofTokenSigned(
 
 func TestPeersMysql(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir)
+	db, err := New("mysql", "root:root@/repbin", dir, 100)
 	if err != nil {
 		t.Fatalf("New Mysql: %s", err)
 	}
@@ -83,7 +83,7 @@ func TestPeersMysql(t *testing.T) {
 func TestPeersSQLite(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
 	dbFile := path.Join(os.TempDir(), "db.test-peers")
-	db, err := New("sqlite3", dbFile, dir)
+	db, err := New("sqlite3", dbFile, dir, 100)
 	if err != nil {
 		t.Fatalf("New sqlite3: %s", err)
 	}

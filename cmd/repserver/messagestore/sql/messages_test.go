@@ -44,7 +44,7 @@ var testMessage = &structs.MessageStruct{
 
 func TestMessagesMysql(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir)
+	db, err := New("mysql", "root:root@/repbin", dir, 100)
 	if err != nil {
 		t.Fatalf("New Mysql: %s", err)
 	}
@@ -64,7 +64,7 @@ func TestMessagesMysql(t *testing.T) {
 	if id2 < 2 {
 		t.Errorf("NextCounter too small: %d < %d", id2, 2)
 	}
-	msgS, err := db.SelectMessageByID(&testMessage.MessageID)
+	_, msgS, err := db.SelectMessageByID(&testMessage.MessageID)
 	if err != nil {
 		t.Errorf("SelectMessageByID: %s", err)
 	}
@@ -135,7 +135,7 @@ func TestMessagesMysql(t *testing.T) {
 	if err != nil {
 		t.Errorf("DeleteMessageByID: %s", err)
 	}
-	_, err = db.SelectMessageByID(&testMessage.MessageID)
+	_, _, err = db.SelectMessageByID(&testMessage.MessageID)
 	if err == nil {
 		t.Error("Message was deleted but found anyways")
 	}
@@ -147,7 +147,7 @@ func TestMessagesMysql(t *testing.T) {
 func TestMessagesSQLite(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
 	dbFile := path.Join(os.TempDir(), "db.test-messages")
-	db, err := New("sqlite3", dbFile, dir)
+	db, err := New("sqlite3", dbFile, dir, 100)
 	if err != nil {
 		t.Fatalf("New sqlite3: %s", err)
 	}
@@ -168,7 +168,7 @@ func TestMessagesSQLite(t *testing.T) {
 	if id2 < 2 {
 		t.Errorf("NextCounter too small: %d < %d", id2, 2)
 	}
-	msgS, err := db.SelectMessageByID(&testMessage.MessageID)
+	_, msgS, err := db.SelectMessageByID(&testMessage.MessageID)
 	if err != nil {
 		t.Errorf("SelectMessageByID: %s", err)
 	}
@@ -239,7 +239,7 @@ func TestMessagesSQLite(t *testing.T) {
 	if err != nil {
 		t.Errorf("DeleteMessageByID: %s", err)
 	}
-	_, err = db.SelectMessageByID(&testMessage.MessageID)
+	_, _, err = db.SelectMessageByID(&testMessage.MessageID)
 	if err == nil {
 		t.Error("Message was deleted but found anyways")
 	}

@@ -37,7 +37,7 @@ var testIndexMessage = &structs.MessageStruct{
 
 func TestIndexMysql(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir)
+	db, err := New("mysql", "root:root@/repbin", dir, 100)
 	if err != nil {
 		t.Fatalf("New Mysql: %s", err)
 	}
@@ -70,11 +70,11 @@ func TestIndexMysql(t *testing.T) {
 func TestIndexSQLite(t *testing.T) {
 	dir := path.Join(os.TempDir(), "repbinmsg")
 	dbFile := path.Join(os.TempDir(), "db.test-index")
-	db, err := New("sqlite3", dbFile, dir)
+	db, err := New("sqlite3", dbFile, dir, 100)
 	if err != nil {
 		t.Fatalf("New sqlite3: %s", err)
 	}
-	// defer os.Remove(dbFile)
+	defer os.Remove(dbFile)
 	defer db.Close()
 	id, err := db.InsertMessage(testIndexMessage)
 	if err != nil {

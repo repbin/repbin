@@ -99,7 +99,7 @@ var (
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden)
                     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ;`,
-			"SelectMessage": `SELECT Counter, MessageID, ReceiverConstantPubKey, SignerPub,
+			"SelectMessage": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
                     WHERE MessageID=?;`,
 			"DeleteMessage":       `DELETE FROM message WHERE MessageID=?;`,
@@ -124,15 +124,29 @@ var (
                     FOREIGN KEY (Message) REFERENCES message(ID) ON DELETE CASCADE
                 );`,
 			"globalIndexAdd": `INSERT INTO globalindex (Message, EntryTime) VALUES (?, ?);`,
-			"getKeyIndex": `SELECT Counter, MessageID, ReceiverConstantPubKey, SignerPub,
+			"getKeyIndex": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
                     WHERE ReceiverConstantPubKey=? AND Counter>? ORDER BY Counter ASC LIMIT ?
                 ;`,
-			"getGlobalIndex": `SELECT i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
+			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
                     WHERE i.ID>? ORDER BY i.ID ASC LIMIT ?
                 ;`,
+			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
+                    Message BIGINT UNSIGNED NOT NULL,
+                    MessageID VARCHAR(` + strconv.FormatInt(message.MessageIDSize*2, 10) + `) NOT NULL,
+                    SignerPub VARCHAR(` + strconv.FormatInt(message.SignerPubKeySize*2, 10) + `) NOT NULL,
+                    OneTime INT NOT NULL DEFAULT 0,  
+                    DATA MEDIUMBLOB,
+                    UNIQUE KEY Message(Message),
+                    FOREIGN KEY (Message) REFERENCES message(ID) ON DELETE CASCADE
+                );`,
+			"messageBlobInsert": `INSERT INTO messageblob 
+                    (Message, MessageID, SignerPub, OneTime, Data) VALUES
+                    (?, ?, ?, ?, ?);`,
+			"messageBlobSelect": `SELECT Message, MessageID, SignerPub, OneTime, Data FROM messageblob WHERE MessageID=?;`,
+			"messageBlobDelete": `DELETE FROM messageblob WHERE MessageID=?;`,
 		},
 		"sqlite3": map[string]string{
 			"SignerCreate": `CREATE TABLE IF NOT EXISTS signer (
@@ -215,7 +229,7 @@ var (
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden)
                     VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ;`,
-			"SelectMessage": `SELECT Counter, MessageID, ReceiverConstantPubKey, SignerPub,
+			"SelectMessage": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
                     WHERE MessageID=?;`,
 			"DeleteMessage":       `DELETE FROM message WHERE MessageID=?;`,
@@ -240,15 +254,29 @@ var (
                     FOREIGN KEY (Message) REFERENCES message(ID) ON DELETE CASCADE
                 );`,
 			"globalIndexAdd": `INSERT INTO globalindex (Message, EntryTime) VALUES (?, ?);`,
-			"getKeyIndex": `SELECT Counter, MessageID, ReceiverConstantPubKey, SignerPub,
+			"getKeyIndex": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
                     WHERE ReceiverConstantPubKey=? AND Counter>? ORDER BY Counter ASC LIMIT ?
                 ;`,
-			"getGlobalIndex": `SELECT i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
+			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
                     WHERE i.ID>? ORDER BY i.ID ASC LIMIT ?
                 ;`,
+			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
+                    Message BIGINT UNSIGNED NOT NULL,
+                    MessageID VARCHAR(` + strconv.FormatInt(message.MessageIDSize*2, 10) + `) NOT NULL,
+                    SignerPub VARCHAR(` + strconv.FormatInt(message.SignerPubKeySize*2, 10) + `) NOT NULL,
+                    OneTime INT NOT NULL DEFAULT 0,  
+                    DATA BLOB,
+                    UNIQUE (Message),
+                    FOREIGN KEY (Message) REFERENCES message(ID) ON DELETE CASCADE
+                );`,
+			"messageBlobInsert": `INSERT INTO messageblob 
+                    (Message, MessageID, SignerPub, OneTime, Data) VALUES
+                    (?, ?, ?, ?, ?);`,
+			"messageBlobSelect": `SELECT Message, MessageID, SignerPub, OneTime, Data FROM messageblob WHERE MessageID=?;`,
+			"messageBlobDelete": `DELETE FROM messageblob WHERE MessageID=?;`,
 		},
 	}
 )
