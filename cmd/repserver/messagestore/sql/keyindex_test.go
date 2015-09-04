@@ -36,7 +36,7 @@ var testIndexMessage = &structs.MessageStruct{
 }
 
 func TestIndexMysql(t *testing.T) {
-	if testing.Short() {
+	if !testing.Short() {
 		dir := path.Join(os.TempDir(), "repbinmsg")
 		db, err := New("mysql", "root:root@/repbin", dir, 100)
 		if err != nil {

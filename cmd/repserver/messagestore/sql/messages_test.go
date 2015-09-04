@@ -43,7 +43,7 @@ var testMessage = &structs.MessageStruct{
 }
 
 func TestMessagesMysql(t *testing.T) {
-	if testing.Short() {
+	if !testing.Short() {
 		dir := path.Join(os.TempDir(), "repbinmsg")
 		db, err := New("mysql", "root:root@/repbin", dir, 100)
 		if err != nil {
