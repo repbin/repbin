@@ -94,12 +94,7 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 		dir:       dir,
 		driver:    driver,
 	}
-	if _, err := mdb.db.Exec(mdb.queries["messageBlobCreate"]); err != nil {
-		return nil, err
-	}
-	if _, err := mdb.db.Exec(mdb.queries["MessageCounterCreate"]); err != nil {
-		return nil, err
-	}
+
 	if _, err := mdb.db.Exec(mdb.queries["SignerCreate"]); err != nil {
 		return nil, err
 	}
@@ -110,6 +105,12 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 		return nil, err
 	}
 	if _, err := mdb.db.Exec(mdb.queries["GlobalIndexCreate"]); err != nil {
+		return nil, err
+	}
+	if _, err := mdb.db.Exec(mdb.queries["messageBlobCreate"]); err != nil {
+		return nil, err
+	}
+	if _, err := mdb.db.Exec(mdb.queries["MessageCounterCreate"]); err != nil {
 		return nil, err
 	}
 	if mdb.signerInsertQ, err = mdb.db.Prepare(mdb.queries["SignerInsert"]); err != nil {

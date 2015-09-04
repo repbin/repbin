@@ -131,7 +131,7 @@ var (
 			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
-                    WHERE i.ID>? ORDER BY i.ID ASC LIMIT ?
+                    WHERE i.ID>? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
                 ;`,
 			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
                     Message BIGINT UNSIGNED NOT NULL,
@@ -261,7 +261,7 @@ var (
 			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
-                    WHERE i.ID>? ORDER BY i.ID ASC LIMIT ?
+                    WHERE i.ID>? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
                 ;`,
 			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
                     Message BIGINT UNSIGNED NOT NULL,

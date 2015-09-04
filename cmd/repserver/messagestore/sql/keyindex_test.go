@@ -34,6 +34,54 @@ var testIndexMessage = &structs.MessageStruct{
 	Sync:          true,
 	Hidden:        false,
 }
+var testIndexMessage2 = &structs.MessageStruct{
+	ReceiverConstantPubKey: *testReceiverPubKey,
+	MessageID: *sliceToMessageID([]byte(
+		strconv.Itoa(
+			int(
+				time.Now().Unix(),
+			),
+		) + "Message2INDEX",
+	)),
+	SignerPub: *sliceToEDPublicKey([]byte(
+		strconv.Itoa(
+			int(
+				time.Now().Unix(),
+			),
+		) + "Signer",
+	)),
+	PostTime:      11,
+	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireRequest: 291090912,
+	Distance:      2,
+	OneTime:       false,
+	Sync:          true,
+	Hidden:        false,
+}
+var testIndexMessage3 = &structs.MessageStruct{
+	ReceiverConstantPubKey: *testReceiverPubKey,
+	MessageID: *sliceToMessageID([]byte(
+		strconv.Itoa(
+			int(
+				time.Now().Unix(),
+			),
+		) + "Message3INDEX",
+	)),
+	SignerPub: *sliceToEDPublicKey([]byte(
+		strconv.Itoa(
+			int(
+				time.Now().Unix(),
+			),
+		) + "Signer",
+	)),
+	PostTime:      12,
+	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireRequest: 291090912,
+	Distance:      2,
+	OneTime:       false,
+	Sync:          true,
+	Hidden:        false,
+}
 
 func TestIndexMysql(t *testing.T) {
 	if !testing.Short() {
@@ -51,6 +99,10 @@ func TestIndexMysql(t *testing.T) {
 		if err != nil {
 			t.Errorf("AddToGlobalIndex: %s", err)
 		}
+		id, _ = db.InsertMessage(testIndexMessage2)
+		db.AddToGlobalIndex(id)
+		id, _ = db.InsertMessage(testIndexMessage3)
+		db.AddToGlobalIndex(id)
 		l, i, err := db.GetKeyIndex(&testIndexMessage.ReceiverConstantPubKey, 0, 10)
 		if err != nil {
 			t.Errorf("GetKeyIndex: %s", err)
@@ -65,8 +117,10 @@ func TestIndexMysql(t *testing.T) {
 		if i < 1 {
 			t.Error("GetGlobalIndex: None found!!!")
 		}
+		// spew.Dump(l)
 		_ = l
 	}
+
 }
 
 func TestIndexSQLite(t *testing.T) {
@@ -86,6 +140,10 @@ func TestIndexSQLite(t *testing.T) {
 	if err != nil {
 		t.Errorf("AddToGlobalIndex: %s", err)
 	}
+	id, _ = db.InsertMessage(testIndexMessage2)
+	db.AddToGlobalIndex(id)
+	id, _ = db.InsertMessage(testIndexMessage3)
+	db.AddToGlobalIndex(id)
 	l, i, err := db.GetKeyIndex(&testIndexMessage.ReceiverConstantPubKey, 0, 10)
 	if err != nil {
 		t.Errorf("GetKeyIndex: %s", err)
@@ -101,4 +159,5 @@ func TestIndexSQLite(t *testing.T) {
 		t.Error("GetGlobalIndex: None found!!!")
 	}
 	_ = l
+
 }
