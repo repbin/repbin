@@ -1,8 +1,9 @@
 package messagestore
 
 import (
-	"mutesrc/log"
 	"time"
+
+	log "github.com/repbin/repbin/deferconsole"
 )
 
 // ExpireFromFS expires data based on filesystem last change

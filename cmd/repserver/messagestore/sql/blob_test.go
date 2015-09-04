@@ -64,7 +64,7 @@ func TestBlobMysql(t *testing.T) {
 	}
 
 	if testMessageBlob.ID != testBlobRes.ID {
-		t.Errorf("ID mismatch: %s != %s", testMessageBlob.ID, testBlobRes.ID)
+		t.Errorf("ID mismatch: %d != %d", testMessageBlob.ID, testBlobRes.ID)
 	}
 	if testMessageBlob.MessageID != testBlobRes.MessageID {
 		t.Errorf("MessageID mismatch: %x != %x", testMessageBlob.MessageID, testBlobRes.MessageID)
@@ -73,7 +73,7 @@ func TestBlobMysql(t *testing.T) {
 		t.Errorf("SignerPublicKey mismatch: %x != %x", testMessageBlob.SignerPublicKey, testBlobRes.SignerPublicKey)
 	}
 	if testMessageBlob.OneTime != testBlobRes.OneTime {
-		t.Errorf("OneTime mismatch: %b != %b", testMessageBlob.OneTime, testBlobRes.OneTime)
+		t.Errorf("OneTime mismatch: %t != %t", testMessageBlob.OneTime, testBlobRes.OneTime)
 	}
 	if !bytes.Equal(testMessageBlob.Data, testBlobRes.Data) {
 		t.Errorf("Data mismatch: %d != %d", len(testMessageBlob.Data), len(testBlobRes.Data))
@@ -112,7 +112,7 @@ func TestBlobSQLite(t *testing.T) {
 	}
 
 	if testMessageBlob.ID != testBlobRes.ID {
-		t.Errorf("ID mismatch: %s != %s", testMessageBlob.ID, testBlobRes.ID)
+		t.Errorf("ID mismatch: %d != %d", testMessageBlob.ID, testBlobRes.ID)
 	}
 	if testMessageBlob.MessageID != testBlobRes.MessageID {
 		t.Errorf("MessageID mismatch: %x != %x", testMessageBlob.MessageID, testBlobRes.MessageID)
@@ -121,7 +121,7 @@ func TestBlobSQLite(t *testing.T) {
 		t.Errorf("SignerPublicKey mismatch: %x != %x", testMessageBlob.SignerPublicKey, testBlobRes.SignerPublicKey)
 	}
 	if testMessageBlob.OneTime != testBlobRes.OneTime {
-		t.Errorf("OneTime mismatch: %b != %b", testMessageBlob.OneTime, testBlobRes.OneTime)
+		t.Errorf("OneTime mismatch: %t != %t", testMessageBlob.OneTime, testBlobRes.OneTime)
 	}
 	if !bytes.Equal(testMessageBlob.Data, testBlobRes.Data) {
 		t.Errorf("Data mismatch: %d != %d", len(testMessageBlob.Data), len(testBlobRes.Data))
@@ -160,7 +160,7 @@ func TestBlobDirSQLite(t *testing.T) {
 	}
 
 	if testMessageBlob.ID != testBlobRes.ID {
-		t.Errorf("ID mismatch: %s != %s", testMessageBlob.ID, testBlobRes.ID)
+		t.Errorf("ID mismatch: %d != %d", testMessageBlob.ID, testBlobRes.ID)
 	}
 	if testMessageBlob.MessageID != testBlobRes.MessageID {
 		t.Errorf("MessageID mismatch: %x != %x", testMessageBlob.MessageID, testBlobRes.MessageID)
@@ -169,7 +169,7 @@ func TestBlobDirSQLite(t *testing.T) {
 		t.Errorf("SignerPublicKey mismatch: %x != %x", testMessageBlob.SignerPublicKey, testBlobRes.SignerPublicKey)
 	}
 	if testMessageBlob.OneTime != testBlobRes.OneTime {
-		t.Errorf("OneTime mismatch: %b != %b", testMessageBlob.OneTime, testBlobRes.OneTime)
+		t.Errorf("OneTime mismatch: %t != %t", testMessageBlob.OneTime, testBlobRes.OneTime)
 	}
 	if !bytes.Equal(testMessageBlob.Data, testBlobRes.Data) {
 		t.Errorf("Data mismatch: %d != %d", len(testMessageBlob.Data), len(testBlobRes.Data))
