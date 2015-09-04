@@ -6,18 +6,18 @@ import (
 
 // GetIndex returns the index for a key
 func (store Store) GetIndex(index *message.Curve25519Key, start int64, count int64) ([][]byte, int, error) {
-	if !store.keyindex.Index(index[:]).Exists() {
+	ret, i, err := store.db.GetKeyIndex(index, start, count)
+	if err != nil {
 		return nil, 0, ErrNotFound
 	}
-	ret, err := store.keyindex.Index(index[:]).ReadRange(start, count)
-	return ret, len(ret), err
+	return ret, i, nil
 }
 
 // GetGlobalIndex returns the global index
 func (store Store) GetGlobalIndex(start int64, count int64) ([][]byte, int, error) {
-	if !store.keyindex.Index(globalindex).Exists() {
+	ret, i, err := store.db.GetGlobalIndex(start, count)
+	if err != nil {
 		return nil, 0, ErrNotFound
 	}
-	ret, err := store.keyindex.Index(globalindex).ReadRange(start, count)
-	return ret, len(ret), err
+	return ret, i, nil
 }

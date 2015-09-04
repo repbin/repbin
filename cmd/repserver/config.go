@@ -8,6 +8,7 @@ import (
 
 	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/cmd/repserver/handlers"
+	"github.com/repbin/repbin/cmd/repserver/messagestore"
 	"github.com/repbin/repbin/utils"
 )
 
@@ -33,6 +34,10 @@ type ServerConfig struct {
 	MaxStoreTime         int    // Maximum time to store a message
 	PeeringPublicKey     string // public key for peering authentication
 	PeeringPrivateKey    string // private key for peering authentication
+	DBDriver             string // Database driver of the storage backend (mysql, sqlite3)
+	DBURL                string // database access URL, user:password@server/database
+	MaxAgeSigners        int64
+	MaxAgeRecipients     int64
 }
 
 var defaultSettings = &ServerConfig{
@@ -55,6 +60,10 @@ var defaultSettings = &ServerConfig{
 	MaxStoreTime:         handlers.DefaultMaxStoreTime,
 	PeeringPublicKey:     "",
 	PeeringPrivateKey:    "",
+	DBDriver:             "mysql",
+	DBURL:                "repbin:repbin@localhost/repbin",
+	MaxAgeSigners:        handlers.DefaultMaxAgeSigners,
+	MaxAgeRecipients:     handlers.DefaultMaxAgeRecipients,
 }
 
 // showConfig shows current (default) config
@@ -100,4 +109,8 @@ func applyConfig(ms *handlers.MessageServer) {
 	ms.EnablePeerHandler = defaultSettings.EnablePeerHandler
 	ms.HubOnly = defaultSettings.HubOnly
 	ms.SocksProxy = defaultSettings.SocksProxy
+	ms.MaxAgeSigners = defaultSettings.MaxAgeSigners
+	ms.MaxAgeRecipients = defaultSettings.MaxAgeRecipients
+	messagestore.MaxAgeSigners = defaultSettings.MaxAgeSigners
+	messagestore.MaxAgeRecipients = defaultSettings.MaxAgeSigners
 }

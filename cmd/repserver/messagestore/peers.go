@@ -1,108 +1,50 @@
 package messagestore
 
 import (
-	"time"
-
 	"github.com/agl/ed25519"
 	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto/structs"
 )
 
 // TouchPeer creates a peer entry if it does not exist yet
 func (store Store) TouchPeer(pubkey *[ed25519.PublicKeySize]byte) {
-	if !store.peersindex.Index(pubkey[:]).Exists() {
-		s := structs.PeerStruct{
-			AuthToken: [keyproof.ProofTokenSignedSize]byte{0x00},
-		}
-		store.peersindex.Index(pubkey[:]).Create(s.Encode().Fill())
+	err := store.db.TouchPeer(pubkey)
+	if err != nil {
+		log.Errorf("TouchPeer: %s, %x\n", err, *pubkey)
 	}
 }
 
 // UpdatePeerFetchStat writes fetch-specific data
 func (store Store) UpdatePeerFetchStat(pubkey *[ed25519.PublicKeySize]byte, lastFetch, lastPos, lastErrors uint64) {
-	if store.peersindex.Index(pubkey[:]).Exists() {
-		store.peersindex.Index(pubkey[:]).Update(func(tx fileback.Tx) error {
-			last := tx.GetLast()
-			if last == nil {
-				log.Errorf("Peer last nil: %x\n", *pubkey)
-				return nil
-			}
-			peerStat := structs.PeerStructDecode(last)
-			if peerStat == nil {
-				log.Errorf("Peer stat nil: %x\n", *pubkey)
-				return nil
-			}
-			peerStat.LastFetch = lastFetch
-			peerStat.LastPosition = lastPos
-			peerStat.ErrorCount = lastErrors
-			tx.Append(peerStat.Encode().Fill())
-			return nil
-		})
+	err := store.db.UpdatePeerStats(pubkey, lastFetch, lastPos, lastErrors)
+	if err != nil {
+		log.Errorf("UpdatePeerStats: %s, %x\n", err, *pubkey)
 	}
 }
 
 // UpdatePeerNotification updates the peer stat after notification send
 func (store Store) UpdatePeerNotification(pubkey *[ed25519.PublicKeySize]byte, hasError bool) {
-	if store.peersindex.Index(pubkey[:]).Exists() {
-		store.peersindex.Index(pubkey[:]).Update(func(tx fileback.Tx) error {
-			last := tx.GetLast()
-			if last == nil {
-				log.Errorf("Peer last nil: %x\n", *pubkey)
-				return nil
-			}
-			peerStat := structs.PeerStructDecode(last)
-			if peerStat == nil {
-				log.Errorf("Peer stat nil: %x\n", *pubkey)
-				return nil
-			}
-			peerStat.LastNotifySend = uint64(time.Now().Unix())
-			if hasError {
-				peerStat.ErrorCount++
-			}
-			tx.Append(peerStat.Encode().Fill())
-			return nil
-		})
+	err := store.db.UpdatePeerNotification(pubkey, hasError)
+	if err != nil {
+		log.Errorf("UpdatePeerNotification: %s, %x\n", err, *pubkey)
 	}
 }
 
 // GetPeerStat returns the last entry of peer statistics for pubkey
 func (store Store) GetPeerStat(pubkey *[ed25519.PublicKeySize]byte) *structs.PeerStruct {
-	if store.peersindex.Index(pubkey[:]).Exists() {
-		last := store.peersindex.Index(pubkey[:]).GetLast()
-		if last == nil {
-			log.Errorf("Peer last nil: %x\n", *pubkey)
-			return nil
-		}
-		peerStat := structs.PeerStructDecode(last)
-		if peerStat == nil {
-			log.Errorf("Peer stat nil: %x\n", *pubkey)
-			return nil
-		}
-		return peerStat
+	st, err := store.db.SelectPeer(pubkey)
+	if err != nil {
+		log.Errorf("GetPeerStat: %s, %x\n", err, *pubkey)
+		return nil
 	}
-	return nil
+	return st
 }
 
 // UpdatePeerAuthToken updates the peer record when a new auth token has been received
 func (store Store) UpdatePeerAuthToken(senderPubKey *[ed25519.PublicKeySize]byte, signedToken *[keyproof.ProofTokenSignedSize]byte) {
-	if store.peersindex.Index(senderPubKey[:]).Exists() {
-		store.peersindex.Index(senderPubKey[:]).Update(func(tx fileback.Tx) error {
-			last := tx.GetLast()
-			if last == nil {
-				log.Errorf("Peer last nil: %x\n", *senderPubKey)
-				return nil
-			}
-			peerStat := structs.PeerStructDecode(last)
-			if peerStat == nil {
-				log.Errorf("Peer stat nil: %x\n", *senderPubKey)
-				return nil
-			}
-			peerStat.LastNotifyFrom = uint64(time.Now().Unix())
-			peerStat.AuthToken = *signedToken
-			tx.Append(peerStat.Encode().Fill())
-			return nil
-		})
+	err := store.db.UpdatePeerToken(senderPubKey, signedToken)
+	if err != nil {
+		log.Errorf("UpdatePeerAuthToken: %s, %x\n", err, *senderPubKey)
 	}
 }
