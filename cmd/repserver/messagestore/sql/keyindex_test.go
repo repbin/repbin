@@ -36,35 +36,37 @@ var testIndexMessage = &structs.MessageStruct{
 }
 
 func TestIndexMysql(t *testing.T) {
-	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir, 100)
-	if err != nil {
-		t.Fatalf("New Mysql: %s", err)
+	if testing.Short() {
+		dir := path.Join(os.TempDir(), "repbinmsg")
+		db, err := New("mysql", "root:root@/repbin", dir, 100)
+		if err != nil {
+			t.Fatalf("New Mysql: %s", err)
+		}
+		defer db.Close()
+		id, err := db.InsertMessage(testIndexMessage)
+		if err != nil {
+			t.Errorf("InsertMessage: %s", err)
+		}
+		err = db.AddToGlobalIndex(id)
+		if err != nil {
+			t.Errorf("AddToGlobalIndex: %s", err)
+		}
+		l, i, err := db.GetKeyIndex(&testIndexMessage.ReceiverConstantPubKey, 0, 10)
+		if err != nil {
+			t.Errorf("GetKeyIndex: %s", err)
+		}
+		if i < 1 {
+			t.Error("GetKeyIndex: None found!!!")
+		}
+		l, i, err = db.GetGlobalIndex(0, 10)
+		if err != nil {
+			t.Errorf("GetGlobalIndex: %s", err)
+		}
+		if i < 1 {
+			t.Error("GetGlobalIndex: None found!!!")
+		}
+		_ = l
 	}
-	defer db.Close()
-	id, err := db.InsertMessage(testIndexMessage)
-	if err != nil {
-		t.Errorf("InsertMessage: %s", err)
-	}
-	err = db.AddToGlobalIndex(id)
-	if err != nil {
-		t.Errorf("AddToGlobalIndex: %s", err)
-	}
-	l, i, err := db.GetKeyIndex(&testIndexMessage.ReceiverConstantPubKey, 0, 10)
-	if err != nil {
-		t.Errorf("GetKeyIndex: %s", err)
-	}
-	if i < 1 {
-		t.Error("GetKeyIndex: None found!!!")
-	}
-	l, i, err = db.GetGlobalIndex(0, 10)
-	if err != nil {
-		t.Errorf("GetGlobalIndex: %s", err)
-	}
-	if i < 1 {
-		t.Error("GetGlobalIndex: None found!!!")
-	}
-	_ = l
 }
 
 func TestIndexSQLite(t *testing.T) {

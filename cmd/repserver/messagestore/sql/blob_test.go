@@ -44,48 +44,50 @@ var testMessageBlob = &MessageBlob{
 }
 
 func TestBlobMysql(t *testing.T) {
-	dir := "" //path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir, 100)
-	if err != nil {
-		t.Fatalf("New Mysql: %s", err)
-	}
-	defer db.Close()
-	testMessageBlob.ID, err = db.InsertMessage(testBlobMessage)
-	if err != nil {
-		t.Errorf("InsertMessage: %s", err)
-	}
-	err = db.InsertBlobStruct(testMessageBlob)
-	if err != nil {
-		t.Errorf("InsertBlobStruct: %s", err)
-	}
-	testBlobRes, err := db.GetBlobDB(&testMessageBlob.MessageID)
-	if err != nil {
-		t.Errorf("GetBlob: %s", err)
-	}
+	if testing.Short() {
+		dir := "" //path.Join(os.TempDir(), "repbinmsg")
+		db, err := New("mysql", "root:root@/repbin", dir, 100)
+		if err != nil {
+			t.Fatalf("New Mysql: %s", err)
+		}
+		defer db.Close()
+		testMessageBlob.ID, err = db.InsertMessage(testBlobMessage)
+		if err != nil {
+			t.Errorf("InsertMessage: %s", err)
+		}
+		err = db.InsertBlobStruct(testMessageBlob)
+		if err != nil {
+			t.Errorf("InsertBlobStruct: %s", err)
+		}
+		testBlobRes, err := db.GetBlobDB(&testMessageBlob.MessageID)
+		if err != nil {
+			t.Errorf("GetBlob: %s", err)
+		}
 
-	if testMessageBlob.ID != testBlobRes.ID {
-		t.Errorf("ID mismatch: %d != %d", testMessageBlob.ID, testBlobRes.ID)
-	}
-	if testMessageBlob.MessageID != testBlobRes.MessageID {
-		t.Errorf("MessageID mismatch: %x != %x", testMessageBlob.MessageID, testBlobRes.MessageID)
-	}
-	if testMessageBlob.SignerPublicKey != testBlobRes.SignerPublicKey {
-		t.Errorf("SignerPublicKey mismatch: %x != %x", testMessageBlob.SignerPublicKey, testBlobRes.SignerPublicKey)
-	}
-	if testMessageBlob.OneTime != testBlobRes.OneTime {
-		t.Errorf("OneTime mismatch: %t != %t", testMessageBlob.OneTime, testBlobRes.OneTime)
-	}
-	if !bytes.Equal(testMessageBlob.Data, testBlobRes.Data) {
-		t.Errorf("Data mismatch: %d != %d", len(testMessageBlob.Data), len(testBlobRes.Data))
-	}
+		if testMessageBlob.ID != testBlobRes.ID {
+			t.Errorf("ID mismatch: %d != %d", testMessageBlob.ID, testBlobRes.ID)
+		}
+		if testMessageBlob.MessageID != testBlobRes.MessageID {
+			t.Errorf("MessageID mismatch: %x != %x", testMessageBlob.MessageID, testBlobRes.MessageID)
+		}
+		if testMessageBlob.SignerPublicKey != testBlobRes.SignerPublicKey {
+			t.Errorf("SignerPublicKey mismatch: %x != %x", testMessageBlob.SignerPublicKey, testBlobRes.SignerPublicKey)
+		}
+		if testMessageBlob.OneTime != testBlobRes.OneTime {
+			t.Errorf("OneTime mismatch: %t != %t", testMessageBlob.OneTime, testBlobRes.OneTime)
+		}
+		if !bytes.Equal(testMessageBlob.Data, testBlobRes.Data) {
+			t.Errorf("Data mismatch: %d != %d", len(testMessageBlob.Data), len(testBlobRes.Data))
+		}
 
-	err = db.DeleteBlobDB(&testMessageBlob.MessageID)
-	if err != nil {
-		t.Errorf("DeleteBlob: %s", err)
-	}
-	_, err = db.GetBlobDB(&testMessageBlob.MessageID)
-	if err == nil {
-		t.Error("GetBlob must fail on deleted message")
+		err = db.DeleteBlobDB(&testMessageBlob.MessageID)
+		if err != nil {
+			t.Errorf("DeleteBlob: %s", err)
+		}
+		_, err = db.GetBlobDB(&testMessageBlob.MessageID)
+		if err == nil {
+			t.Error("GetBlob must fail on deleted message")
+		}
 	}
 }
 

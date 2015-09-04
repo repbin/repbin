@@ -102,65 +102,67 @@ func signerCompare(t *testing.T, id1, id2 int64, baseData, data *structs.SignerS
 }
 
 func TestSignerMysql(t *testing.T) {
-	dir := path.Join(os.TempDir(), "repbinmsg")
-	db, err := New("mysql", "root:root@/repbin", dir, 100)
-	if err != nil {
-		t.Fatalf("New Mysql: %s", err)
+	if testing.Short() {
+		dir := path.Join(os.TempDir(), "repbinmsg")
+		db, err := New("mysql", "root:root@/repbin", dir, 100)
+		if err != nil {
+			t.Fatalf("New Mysql: %s", err)
+		}
+		defer db.Close()
+		// ===== SIGNER TESTS =====
+		sigID := insertSignerQuery(t, db, testSigner)
+		sigID2, sigData2 := selectSignerQuery(t, db, testSigner)
+		signerCompare(t, sigID, sigID2, testSigner, sigData2)
+		sigID3, sigData3 := selectSignerIDQuery(t, db, sigID)
+		signerCompare(t, sigID, sigID3, testSigner, sigData3)
+		sigData3.MaxMessagesRetained = 13
+		updateSigner(t, db, sigData3)
+		sigID4, sigData4 := selectSignerIDQuery(t, db, sigID)
+		signerCompare(t, sigID, sigID4, sigData3, sigData4)
+		sigData3.MaxMessagesRetained = 10
+		insertOrUpdateSigner(t, db, sigData3)
+		sigID5, sigData5 := selectSignerIDQuery(t, db, sigID)
+		signerCompare(t, sigID, sigID5, sigData3, sigData5)
+		sigData3.PublicKey = *sliceToSignerPubKey(
+			[]byte(
+				strconv.Itoa(
+					int(
+						time.Now().Unix(),
+					),
+				) + "-new",
+			),
+		)
+		insertOrUpdateSigner(t, db, sigData3)
+		_, sigData5 = selectSignerQuery(t, db, sigData3)
+		signerCompare(t, 0, 0, sigData3, sigData5)
+		err = db.AddMessage(&sigData5.PublicKey)
+		if err != nil {
+			t.Errorf("AddMessage: %s", err)
+		}
+		_, sigData6, _ := db.SelectSigner(&sigData5.PublicKey)
+		if sigData5.MessagesRetained != sigData6.MessagesRetained-1 {
+			t.Error("AddMessage MessagesRetained")
+		}
+		if sigData5.MessagesPosted != sigData6.MessagesPosted-1 {
+			t.Error("AddMessage MessagesPosted")
+		}
+		err = db.DelMessage(&sigData5.PublicKey)
+		if err != nil {
+			t.Errorf("DelMessage: %s", err)
+		}
+		_, sigData6, _ = db.SelectSigner(&sigData5.PublicKey)
+		if sigData5.MessagesRetained != sigData6.MessagesRetained {
+			t.Error("DelMessage MessagesRetained")
+		}
+		if sigData5.MessagesPosted != sigData6.MessagesPosted-1 {
+			t.Error("DelMessage MessagesPosted")
+		}
+		_, _, err = db.ExpireSigners(10)
+		if err != nil {
+			t.Errorf("ExpireSigners: %s", err)
+		}
+		// ===== SIGNER TESTS =====
 	}
-	defer db.Close()
-	// ===== SIGNER TESTS =====
-	sigID := insertSignerQuery(t, db, testSigner)
-	sigID2, sigData2 := selectSignerQuery(t, db, testSigner)
-	signerCompare(t, sigID, sigID2, testSigner, sigData2)
-	sigID3, sigData3 := selectSignerIDQuery(t, db, sigID)
-	signerCompare(t, sigID, sigID3, testSigner, sigData3)
-	sigData3.MaxMessagesRetained = 13
-	updateSigner(t, db, sigData3)
-	sigID4, sigData4 := selectSignerIDQuery(t, db, sigID)
-	signerCompare(t, sigID, sigID4, sigData3, sigData4)
-	sigData3.MaxMessagesRetained = 10
-	insertOrUpdateSigner(t, db, sigData3)
-	sigID5, sigData5 := selectSignerIDQuery(t, db, sigID)
-	signerCompare(t, sigID, sigID5, sigData3, sigData5)
-	sigData3.PublicKey = *sliceToSignerPubKey(
-		[]byte(
-			strconv.Itoa(
-				int(
-					time.Now().Unix(),
-				),
-			) + "-new",
-		),
-	)
-	insertOrUpdateSigner(t, db, sigData3)
-	_, sigData5 = selectSignerQuery(t, db, sigData3)
-	signerCompare(t, 0, 0, sigData3, sigData5)
-	err = db.AddMessage(&sigData5.PublicKey)
-	if err != nil {
-		t.Errorf("AddMessage: %s", err)
-	}
-	_, sigData6, _ := db.SelectSigner(&sigData5.PublicKey)
-	if sigData5.MessagesRetained != sigData6.MessagesRetained-1 {
-		t.Error("AddMessage MessagesRetained")
-	}
-	if sigData5.MessagesPosted != sigData6.MessagesPosted-1 {
-		t.Error("AddMessage MessagesPosted")
-	}
-	err = db.DelMessage(&sigData5.PublicKey)
-	if err != nil {
-		t.Errorf("DelMessage: %s", err)
-	}
-	_, sigData6, _ = db.SelectSigner(&sigData5.PublicKey)
-	if sigData5.MessagesRetained != sigData6.MessagesRetained {
-		t.Error("DelMessage MessagesRetained")
-	}
-	if sigData5.MessagesPosted != sigData6.MessagesPosted-1 {
-		t.Error("DelMessage MessagesPosted")
-	}
-	_, _, err = db.ExpireSigners(10)
-	if err != nil {
-		t.Errorf("ExpireSigners: %s", err)
-	}
-	// ===== SIGNER TESTS =====
 }
 
 func TestSignersSQLite(t *testing.T) {
