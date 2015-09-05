@@ -20,7 +20,7 @@ import (
 )
 
 // Version of this release
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 var (
 	// ErrNoServers is returned if no servers are known

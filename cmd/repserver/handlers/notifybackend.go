@@ -158,6 +158,7 @@ func (ms MessageServer) notifyPeer(PubKey *[ed25519.PublicKeySize]byte, url stri
 		log.Debugf("Notify error: %s\n", err)
 		ms.DB.UpdatePeerNotification(PubKey, true)
 	} else {
+		log.Debugf("Notified peer: %x\n", *PubKey)
 		ms.DB.UpdatePeerNotification(PubKey, false)
 	}
 }

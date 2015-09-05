@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/repbin/repbin/cmd/repserver/stat"
 	log "github.com/repbin/repbin/deferconsole"
@@ -31,21 +32,29 @@ func (ms MessageServer) RunServer() {
 	// Start timers
 	go ms.notifyWatch()
 	// static file handler
-	http.Handle("/", http.FileServer(http.Dir(ms.path+string(os.PathSeparator)+"static")))
-	http.HandleFunc("/id", ms.ServeID)
+	httpHandlers := http.NewServeMux()
+
+	httpHandlers.Handle("/", http.FileServer(http.Dir(ms.path+string(os.PathSeparator)+"static")))
+	httpHandlers.HandleFunc("/id", ms.ServeID)
 	if !ms.HubOnly {
-		http.HandleFunc("/keyindex", ms.GetKeyIndex)
-		http.HandleFunc("/post", ms.GenPostHandler(false))
+		httpHandlers.HandleFunc("/keyindex", ms.GetKeyIndex)
+		httpHandlers.HandleFunc("/post", ms.GenPostHandler(false))
 		if ms.EnableOneTimeHandler {
-			http.HandleFunc("/local/post", ms.GenPostHandler(true))
+			httpHandlers.HandleFunc("/local/post", ms.GenPostHandler(true))
 		}
 		if ms.EnableDeleteHandler {
-			http.HandleFunc("/delete", ms.Delete)
+			httpHandlers.HandleFunc("/delete", ms.Delete)
 		}
 	}
-	http.HandleFunc("/globalindex", ms.GetGlobalIndex)
-	http.HandleFunc("/fetch", ms.Fetch)
-	http.HandleFunc("/notify", ms.GetNotify)
-	listenURL := "127.0.0.1:" + strconv.Itoa(ms.ListenPort)
-	http.ListenAndServe(listenURL, nil) // enable
+	httpHandlers.HandleFunc("/globalindex", ms.GetGlobalIndex)
+	httpHandlers.HandleFunc("/fetch", ms.Fetch)
+	httpHandlers.HandleFunc("/notify", ms.GetNotify)
+	httpServer := &http.Server{
+		Addr:           "127.0.0.1:" + strconv.Itoa(ms.ListenPort),
+		Handler:        httpHandlers,
+		ReadTimeout:    40 * time.Second,
+		WriteTimeout:   40 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+	}
+	httpServer.ListenAndServe()
 }

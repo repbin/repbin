@@ -61,7 +61,7 @@ var defaultSettings = &ServerConfig{
 	PeeringPublicKey:     "",
 	PeeringPrivateKey:    "",
 	DBDriver:             "mysql",
-	DBURL:                "repbin:repbin@localhost/repbin",
+	DBURL:                "repbin:repbin@/repbin",
 	MaxAgeSigners:        handlers.DefaultMaxAgeSigners,
 	MaxAgeRecipients:     handlers.DefaultMaxAgeRecipients,
 }
