@@ -157,7 +157,7 @@ func (sprox Proxy) Create() (*http.Client, error) {
 		Dial:                  dialer.Dial,
 		DisableKeepAlives:     true,
 		MaxIdleConnsPerHost:   1,
-		ResponseHeaderTimeout: time.Second * 45,
+		ResponseHeaderTimeout: time.Second * time.Duration(Timeout),
 	}
 	client := &http.Client{
 		Transport: tr,

@@ -52,8 +52,8 @@ func (ms MessageServer) RunServer() {
 	httpServer := &http.Server{
 		Addr:           "127.0.0.1:" + strconv.Itoa(ms.ListenPort),
 		Handler:        httpHandlers,
-		ReadTimeout:    40 * time.Second,
-		WriteTimeout:   40 * time.Second,
+		ReadTimeout:    90 * time.Second,
+		WriteTimeout:   90 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
 	httpServer.ListenAndServe()
