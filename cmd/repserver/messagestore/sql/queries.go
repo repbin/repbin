@@ -126,12 +126,12 @@ var (
 			"globalIndexAdd": `INSERT INTO globalindex (Message, EntryTime) VALUES (?, ?);`,
 			"getKeyIndex": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
-                    WHERE ReceiverConstantPubKey=? AND Counter>? ORDER BY Counter ASC LIMIT ?
+                    WHERE ReceiverConstantPubKey=? AND Counter>=? ORDER BY Counter ASC LIMIT ?
                 ;`,
 			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
-                    WHERE i.ID>? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
+                    WHERE i.ID>=? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
                 ;`,
 			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
                     Message BIGINT UNSIGNED NOT NULL,
@@ -256,12 +256,12 @@ var (
 			"globalIndexAdd": `INSERT INTO globalindex (Message, EntryTime) VALUES (?, ?);`,
 			"getKeyIndex": `SELECT ID, Counter, MessageID, ReceiverConstantPubKey, SignerPub,
                     PostTime, ExpireTime, ExpireRequest, Distance, OneTime, Sync, Hidden FROM message
-                    WHERE ReceiverConstantPubKey=? AND Counter>? ORDER BY Counter ASC LIMIT ?
+                    WHERE ReceiverConstantPubKey=? AND Counter>=? ORDER BY Counter ASC LIMIT ?
                 ;`,
 			"getGlobalIndex": `SELECT m.ID, i.ID, m.MessageID, m.ReceiverConstantPubKey, m.SignerPub,
                     m.PostTime, m.ExpireTime, m.ExpireRequest, m.Distance, m.OneTime, m.Sync, m.Hidden 
                     FROM message AS m, globalindex AS i
-                    WHERE i.ID>? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
+                    WHERE i.ID>=? AND i.Message=m.ID ORDER BY i.ID ASC LIMIT ?
                 ;`,
 			"messageBlobCreate": `CREATE TABLE IF NOT EXISTS messageblob (
                     Message BIGINT UNSIGNED NOT NULL,
