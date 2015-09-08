@@ -9,7 +9,6 @@ import (
 	"time"
 
 	log "github.com/repbin/repbin/deferconsole"
-	"github.com/repbin/repbin/fileback"
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyproof"
@@ -53,7 +52,7 @@ func (ms MessageServer) GetGlobalIndex(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	messages, found, err := ms.DB.GetGlobalIndex(start, count)
-	if err != nil && err != fileback.ErrNoMore {
+	if err != nil && err != ErrNoMore {
 		log.Debugf("List:GetIndex: %s\n", err)
 		log.Debugf("List:GetIndex: Key %x\n", pubKey)
 		io.WriteString(w, "ERROR: List failed\n")

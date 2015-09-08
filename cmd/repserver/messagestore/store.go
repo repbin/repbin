@@ -4,8 +4,7 @@ package messagestore
 import (
 	"errors"
 
-	"github.com/repbin/repbin/fileback"
-	"github.com/repbin/repbin/utils/repproto/structs"
+	"github.com/repbin/repbin/cmd/repserver/messagestore/sql"
 )
 
 // Version of this release
@@ -30,29 +29,24 @@ var (
 	MaxMessageSize = 87776
 )
 
-// ExpireRun defines the time in seconds between expire runs
-var ExpireRun = 3600
+// MaxAgeSigners defines when to delete signers that are not active anymore
+var MaxAgeSigners = int64(31536000)
 
-// FSExpire is the time a filesystem entry must expire when not changed
-var FSExpire = 2678400
-var globalindex = []byte("globalindex")
+// MaxAgeRecipients defines when to delete recipients that are not active anymore
+var MaxAgeRecipients = int64(31536000)
 
 // Store implements a message store
 type Store struct {
-	messages    fileback.PagedList // Messages themselves, indexed by MessageID
-	signers     fileback.PagedList // Signer data, indexed by SignerPubKey
-	keyindex    fileback.PagedList // Key indices. Pubkey is index. Special case: globalindex
-	expireindex fileback.PagedList // Messages to expire, indexed by expire time
-	peersindex  fileback.PagedList // peer information indexed by peer public key
+	db *sql.MessageDB
 }
 
 // New Create a new message store at directory dir. Workers is the maximum concurrent access to an index
-func New(dir string, workers int) *Store {
+func New(driver, url, dir string, workers int) *Store {
+	var err error
 	s := new(Store)
-	s.messages = fileback.NewBlob(dir+messageDir, int64(MaxMessageSize+structs.MessageStructSize), workers)
-	s.signers = fileback.NewRoundRobin(dir+signerDir, structs.SignerStructSize, 10, ' ', []byte("\n"), workers)       // We keep signer history, last 10 entries
-	s.keyindex = fileback.NewRolling(dir+keyindexDir, structs.MessageStructSize, 2048, ' ', []byte("\n"), workers)    // Maximum 2048 entries per file
-	s.expireindex = fileback.NewContinue(dir+expireDir, structs.ExpireStructSize, 102400, ' ', []byte("\n"), workers) // Don't expire more than 100k
-	s.peersindex = fileback.NewRoundRobin(dir+peersDir, structs.PeerStructSize, 10, ' ', []byte("\n"), workers)
+	s.db, err = sql.New(driver, url, dir, workers)
+	if err != nil {
+		panic(err)
+	}
 	return s
 }

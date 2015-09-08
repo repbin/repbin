@@ -14,7 +14,7 @@ import (
 )
 
 // Version of this release
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 var (
 	// ErrMaxBytes is returned if too many bytes are available
@@ -28,6 +28,25 @@ var (
 
 func init() {
 	rand.Read(secret[:])
+}
+
+// MaxReadTTY reads n bytes from r. If more bytes are available, return ErrMaxBytes
+func MaxReadTTY(n int64, r io.Reader) ([]byte, error) {
+	d := make([]byte, n+1)
+	xn := 0
+	for {
+		rn, err := r.Read(d[xn:])
+		if err != nil {
+			if err != io.EOF {
+				return nil, err
+			}
+			return d[:xn], nil
+		}
+		xn += rn
+		if int64(xn) > n {
+			return nil, ErrMaxBytes
+		}
+	}
 }
 
 // MaxRead reads n bytes from r. If more bytes are available, return ErrMaxBytes
@@ -60,7 +79,7 @@ func MaxReadFile(n int64, filename string) ([]byte, error) {
 
 // MaxStdinRead reads n bytes from stdin. If more bytes are available, return ErrMaxBytes
 func MaxStdinRead(n int64) ([]byte, error) {
-	return MaxRead(n, os.Stdin)
+	return MaxReadTTY(n, os.Stdin)
 }
 
 // WriteStdout writes b to stdout

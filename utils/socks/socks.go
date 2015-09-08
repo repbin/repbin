@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"io"
+	"net"
 	"net/http"
 	urlPackage "net/url"
 	"time"
@@ -31,8 +32,10 @@ func (sprox Proxy) LimitGet(url string, limit int64) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		resp.Body.Close()
+	}()
 	body, err := utils.MaxRead(limit, resp.Body)
-	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -50,8 +53,10 @@ func (sprox Proxy) LimitPostBytes(url string, bodyType string, body []byte, limi
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		resp.Body.Close()
+	}()
 	retbody, err := utils.MaxRead(limit, resp.Body)
-	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +69,10 @@ func (sprox Proxy) LimitPost(url string, bodyType string, body io.Reader, limit 
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		resp.Body.Close()
+	}()
 	retbody, err := utils.MaxRead(limit, resp.Body)
-	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -134,13 +141,23 @@ func (sprox Proxy) Create() (*http.Client, error) {
 			return nil, err
 		}
 	}
-	dialer, err := proxy.FromURL(socksURL, proxy.Direct)
+	// ToDo: Replace proxy.Direct with
+	uplinkDialer := &net.Dialer{
+		Timeout: time.Second * time.Duration(Timeout),
+		// Deadline:  time.Second * time.Duration(Timeout),
+		KeepAlive: 0,
+	}
+	// dialer, err := proxy.FromURL(socksURL, proxy.Direct)
+	dialer, err := proxy.FromURL(socksURL, uplinkDialer)
 	if err != nil {
 		return nil, err
 	}
 	tr := &http.Transport{
 		//Proxy: http.ProxyFromEnvironment,
-		Dial: dialer.Dial,
+		Dial:                  dialer.Dial,
+		DisableKeepAlives:     true,
+		MaxIdleConnsPerHost:   1,
+		ResponseHeaderTimeout: time.Second * time.Duration(Timeout),
 	}
 	client := &http.Client{
 		Transport: tr,

@@ -18,7 +18,7 @@ import (
 )
 
 // Version of this release
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 const (
 	// MaxPostSize maximum size for posts
@@ -59,11 +59,17 @@ const (
 	DefaultMaxStoreTime = 2592000
 	// DefaultAddToPeer determines if the server adds itself to the peerlist
 	DefaultAddToPeer = true
+	// DefaultMaxAgeSigners defines when to delete signers that are not active anymore
+	DefaultMaxAgeSigners = int64(31536000)
+	// DefaultMaxAgeRecipients defines when to delete recipients that are not active anymore
+	DefaultMaxAgeRecipients = int64(31536000)
 )
 
 var (
 	// ErrBadMessageID .
 	ErrBadMessageID = errors.New("server: MessageID unexpected")
+	// ErrNoMore .
+	ErrNoMore = errors.New("fileback: No more entries")
 )
 
 // Workers defines how many parallel index access goroutines may exist without locking.
@@ -85,29 +91,32 @@ type MessageServer struct {
 	AuthPubKey           *message.Curve25519Key       // Used for hidden key index access
 	TokenPubKey          *[ed25519.PublicKeySize]byte // Used for peer identification
 	InfoStruct           *ServerInfo
-	TimeSkew             int64     // TimeSkew changes the returned time by a constant
-	TimeGrace            uint64    // Grace time for authentication
-	MaxSleep             int64     // MaxSleep is the maximum number of nano seconds of a sleep call
-	MaxIndexGlobal       int64     // Maximum entries from global index
-	MaxIndexKey          int64     // Maximum entries from key index
-	MaxAuthTokenAge      int64     // Maximum age of peer authentication token
-	PeerFile             string    // File containing the peer information
-	NotifyDuration       int64     // Time between notifications
-	FetchDuration        int64     // Time between fetches
-	FetchMax             int       // Maximum messages to fetch per call to peer
-	ExpireDuration       int64     // Time between expire runs
-	ExpireFSDuration     int64     // Time between filesystem expire runs
-	SocksProxy           string    // Socks5 proxy
-	EnableDeleteHandler  bool      // should the delete handler be enabled?
-	EnableOneTimeHandler bool      // should the one-time message handler be enabled?
-	EnablePeerHandler    bool      // show the peer handler be offered?
-	HubOnly              bool      // should this server act only as hub?
-	StepLimit            int       // Boost limit
-	ListenPort           int       // what port to listen on for http
-	MinStoreTime         int       // minimum time in seconds for storage
-	MaxStoreTime         int       // maximum time in seconds for storage
-	Stat                 bool      // calculate and show server usage statistics
-	notifyChan           chan bool // Notification channel. Write to notify system about new message
+	TimeSkew             int64  // TimeSkew changes the returned time by a constant
+	TimeGrace            uint64 // Grace time for authentication
+	MaxSleep             int64  // MaxSleep is the maximum number of nano seconds of a sleep call
+	MaxIndexGlobal       int64  // Maximum entries from global index
+	MaxIndexKey          int64  // Maximum entries from key index
+	MaxAuthTokenAge      int64  // Maximum age of peer authentication token
+	PeerFile             string // File containing the peer information
+	NotifyDuration       int64  // Time between notifications
+	FetchDuration        int64  // Time between fetches
+	FetchMax             int    // Maximum messages to fetch per call to peer
+	ExpireDuration       int64  // Time between expire runs
+	ExpireFSDuration     int64  // Time between filesystem expire runs
+	SocksProxy           string // Socks5 proxy
+	EnableDeleteHandler  bool   // should the delete handler be enabled?
+	EnableOneTimeHandler bool   // should the one-time message handler be enabled?
+	EnablePeerHandler    bool   // show the peer handler be offered?
+	HubOnly              bool   // should this server act only as hub?
+	StepLimit            int    // Boost limit
+	ListenPort           int    // what port to listen on for http
+	MinStoreTime         int    // minimum time in seconds for storage
+	MaxStoreTime         int    // maximum time in seconds for storage
+	Stat                 bool   // calculate and show server usage statistics
+	MaxAgeSigners        int64
+	MaxAgeRecipients     int64
+
+	notifyChan chan bool // Notification channel. Write to notify system about new message
 }
 
 // ServerInfo contains the public server information.
@@ -122,10 +131,10 @@ type ServerInfo struct {
 }
 
 // New returns a MessageServer.
-func New(path string, pubKey, privKey []byte) (*MessageServer, error) {
+func New(driver, url, path string, pubKey, privKey []byte) (*MessageServer, error) {
 	var err error
 	ms := new(MessageServer)
-	ms.DB = messagestore.New(path, Workers)
+	ms.DB = messagestore.New(driver, url, path, Workers)
 	if err != nil {
 		return nil, err
 	}
@@ -145,12 +154,15 @@ func New(path string, pubKey, privKey []byte) (*MessageServer, error) {
 	ms.FetchDuration = DefaultFetchDuration
 	ms.FetchMax = DefaultFetchMax
 	ms.ExpireDuration = DefaultExpireDuration
-	messagestore.ExpireRun = DefaultExpireDuration
 	ms.ExpireFSDuration = DefaultExpireFSDuration
 	ms.StepLimit = DefaultStepLimit
 	ms.ListenPort = DefaultListenPort
 	ms.MinStoreTime = DefaultMinStoreTime
 	ms.MaxStoreTime = DefaultMaxStoreTime
+	ms.MaxAgeSigners = DefaultMaxAgeSigners
+	ms.MaxAgeRecipients = DefaultMaxAgeRecipients
+	messagestore.MaxAgeRecipients = DefaultMaxAgeRecipients
+	messagestore.MaxAgeSigners = DefaultMaxAgeSigners
 	ms.EnablePeerHandler = true
 
 	ms.authPrivKey, err = message.GenLongTermKey(true, false)
