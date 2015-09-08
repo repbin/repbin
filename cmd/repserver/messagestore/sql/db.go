@@ -81,7 +81,9 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	var db *sql.DB
 	var err error
 	if driver == "sqlite3" {
-		os.MkdirAll(path.Dir(url), 0700)
+		if err := os.MkdirAll(path.Dir(url), 0700); err != nil {
+			return nil, err
+		}
 	}
 	db, err = sql.Open(driver, url)
 	if err != nil {
