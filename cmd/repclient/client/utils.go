@@ -152,7 +152,9 @@ func WriteConfigFile(conf ConfigVariables) error {
 		return ErrNoConfig
 	}
 	dir := path.Dir(configFile)
-	os.MkdirAll(dir, 0700)
+	if err := os.MkdirAll(dir, 0700); err != nil {
+		return err
+	}
 	data, err := json.MarshalIndent(conf, "", "    ")
 	if err != nil {
 		return err
