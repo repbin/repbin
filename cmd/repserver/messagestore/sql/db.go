@@ -217,6 +217,17 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	return mdb, nil
 }
 
+func newMySQLForTest(dir string, shards int) (*MessageDB, error) {
+	var url string
+	// MySQL in Travis CI doesn't have a password
+	if os.Getenv("TRAVIS") == "true" {
+		url = "root@/repbin"
+	} else {
+		url = "root:root@/repbin"
+	}
+	return New("mysql", url, dir, shards)
+}
+
 // LockShard locks shard s
 func (db *MessageDB) LockShard(s []byte) {
 	db.shardMutexes[db.calcShard(s)].Lock()
