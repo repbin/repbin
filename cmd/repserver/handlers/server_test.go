@@ -17,7 +17,13 @@ func TestGenPostHandler(t *testing.T) {
 	pubKey, _ := hex.DecodeString("39d8913ab046428e409cf1fa7cee6f63c1f6bf701356a44a8c8c2559bdb2526f")
 	privKey, _ := hex.DecodeString("20a2633e422090a4f4a102f8e3d112f2b4378dbd9957e8c892067fc09239d36c39d8913ab046428e409cf1fa7cee6f63c1f6bf701356a44a8c8c2559bdb2526f")
 	driver := "mysql"
-	url := "root:root@/repbin"
+	var url string
+	// MySQL in Travis CI doesn't have a password
+	if os.Getenv("TRAVIS") == "true" {
+		url = "root@/repbin"
+	} else {
+		url = "root:root@/repbin"
+	}
 
 	log.SetMinLevel(log.LevelDebug)
 	testDir := path.Join(os.TempDir(), "repbin")

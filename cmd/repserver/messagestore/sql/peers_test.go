@@ -30,7 +30,7 @@ var testSignedToken = sliceToProofTokenSigned(
 func TestPeersMysql(t *testing.T) {
 	if !testing.Short() {
 		dir := path.Join(os.TempDir(), "repbinmsg")
-		db, err := New("mysql", "root:root@/repbin", dir, 100)
+		db, err := newMySQLForTest(dir, 100)
 		if err != nil {
 			t.Fatalf("New Mysql: %s", err)
 		}
