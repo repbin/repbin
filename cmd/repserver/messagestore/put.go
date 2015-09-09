@@ -10,17 +10,13 @@ import (
 
 // MessageExists returns true if the message exists
 func (store Store) MessageExists(messageID [message.MessageIDSize]byte) bool {
-	_, s, err := store.db.SelectMessageByID(&messageID)
-	if err == nil && s != nil {
-		return true
-	}
-	return false
+	return store.db.MessageKnown(&messageID)
 }
 
 // Put stores a message in the message store WITHOUT notifying the notify backend
 func (store Store) Put(msgStruct *structs.MessageStruct, signerStruct *structs.SignerStruct, message []byte) error {
 	// Check if message exists
-	if store.MessageExists(msgStruct.MessageID) {
+	if store.db.MessageKnown(&msgStruct.MessageID) {
 		return ErrDuplicate
 	}
 	// Check if signer exists, load last from signer
@@ -61,6 +57,7 @@ func (store Store) Put(msgStruct *structs.MessageStruct, signerStruct *structs.S
 		log.Errorf("messagestore, write message (DB): %s", err)
 		return err
 	}
+	store.db.LearnMessage(&msgStruct.MessageID)
 	err = store.db.InsertBlob(storeID, &msgStruct.MessageID, &signerStruct.PublicKey, msgStruct.OneTime, message)
 	if err != nil {
 		log.Errorf("messagestore, write message (Blob): %s", err)

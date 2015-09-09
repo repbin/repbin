@@ -147,6 +147,14 @@ var (
                     (?, ?, ?, ?, ?);`,
 			"messageBlobSelect": `SELECT Message, MessageID, SignerPub, OneTime, Data FROM messageblob WHERE MessageID=?;`,
 			"messageBlobDelete": `DELETE FROM messageblob WHERE MessageID=?;`,
+			"messageExistCreate": `CREATE TABLE IF NOT EXISTS messageexists (
+                    MessageID VARCHAR(` + strconv.FormatInt(message.MessageIDSize*2, 10) + `) NOT NULL,
+                    EntryTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
+                    UNIQUE KEY MessageID(MessageID)
+                );`,
+			"messageExistInsert": `INSERT INTO messageexists (MessageID, EntryTime) VALUES (?, ?);`,
+			"messageExistSelect": `SELECT MessageID FROM messageexists WHERE MessageID=?;`,
+			"messageExistExpire": `DELETE FROM messageexists WHERE EntryTime<=?;`,
 		},
 		"sqlite3": map[string]string{
 			"SignerCreate": `CREATE TABLE IF NOT EXISTS signer (
@@ -277,6 +285,14 @@ var (
                     (?, ?, ?, ?, ?);`,
 			"messageBlobSelect": `SELECT Message, MessageID, SignerPub, OneTime, Data FROM messageblob WHERE MessageID=?;`,
 			"messageBlobDelete": `DELETE FROM messageblob WHERE MessageID=?;`,
+			"messageExistCreate": `CREATE TABLE IF NOT EXISTS messageexists (
+                    MessageID VARCHAR(` + strconv.FormatInt(message.MessageIDSize*2, 10) + `) NOT NULL,
+                    EntryTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
+                    UNIQUE (MessageID)
+                );`,
+			"messageExistInsert": `INSERT INTO messageexists (MessageID, EntryTime) VALUES (?, ?);`,
+			"messageExistSelect": `SELECT MessageID FROM messageexists WHERE MessageID=?;`,
+			"messageExistExpire": `DELETE FROM messageexists WHERE EntryTime<=?;`,
 		},
 	}
 )

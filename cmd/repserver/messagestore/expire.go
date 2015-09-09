@@ -38,4 +38,8 @@ func (store Store) ExpireFromIndex(cycles int) {
 	if err != nil {
 		log.Errorf("ExpireFromIndex, ExpireMessageCounter: %s", err)
 	}
+	err = store.db.ForgetMessages(time.Now().Unix() - MaxAgeRecipients)
+	if err != nil {
+		log.Errorf("ExpireFromIndex, ForgetMessages: %s", err)
+	}
 }
