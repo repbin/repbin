@@ -5,7 +5,6 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 )
 
 var learnMessageID = sliceToMessageID([]byte(

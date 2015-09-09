@@ -3,7 +3,6 @@ package handlers
 import (
 	"io"
 	"net/http"
-	"time"
 
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/utils"

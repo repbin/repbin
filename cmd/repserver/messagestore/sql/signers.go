@@ -2,7 +2,6 @@ package sql
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils/repproto/structs"

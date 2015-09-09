@@ -5,7 +5,6 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/repbin/repbin/utils/repproto/structs"
 )

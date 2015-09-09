@@ -1,10 +1,6 @@
 package sql
 
-import (
-	"time"
-
-	"github.com/repbin/repbin/message"
-)
+import "github.com/repbin/repbin/message"
 
 // LearnMessage records a message to be known
 func (db *MessageDB) LearnMessage(mid *[message.MessageIDSize]byte) error {

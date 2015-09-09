@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"

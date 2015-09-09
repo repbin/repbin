@@ -1,8 +1,6 @@
 package sql
 
 import (
-	"time"
-
 	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto/structs"

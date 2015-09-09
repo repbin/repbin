@@ -1,10 +1,6 @@
 package messagestore
 
-import (
-	"time"
-
-	log "github.com/repbin/repbin/deferconsole"
-)
+import log "github.com/repbin/repbin/deferconsole"
 
 // ExpireFromFS expires data based on filesystem last change
 func (store Store) ExpireFromFS() {
