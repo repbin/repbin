@@ -1,8 +1,6 @@
 package sql
 
 import (
-	"time"
-
 	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto/structs"
@@ -47,12 +45,12 @@ func (db *MessageDB) UpdatePeerNotification(pubkey *[ed25519.PublicKeySize]byte,
 	if hasError {
 		errorDif = 1
 	}
-	return updateConvertNilError(db.peerUpdateNotifyQ.Exec(time.Now().Unix(), errorDif, toHex(pubkey[:])))
+	return updateConvertNilError(db.peerUpdateNotifyQ.Exec(CurrentTime(), errorDif, toHex(pubkey[:])))
 }
 
 // UpdatePeerToken records the next authentication token for this peer
 func (db *MessageDB) UpdatePeerToken(pubkey *[ed25519.PublicKeySize]byte, signedToken *[keyproof.ProofTokenSignedSize]byte) error {
-	return updateConvertNilError(db.peerUpdateTokenQ.Exec(time.Now().Unix(), toHex(signedToken[:]), toHex(pubkey[:])))
+	return updateConvertNilError(db.peerUpdateTokenQ.Exec(CurrentTime(), toHex(signedToken[:]), toHex(pubkey[:])))
 }
 
 // SelectPeer returns information about the peer

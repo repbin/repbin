@@ -2,7 +2,6 @@ package sql
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/repbin/repbin/message"
 	"github.com/repbin/repbin/utils/repproto/structs"
@@ -104,7 +103,7 @@ func (db *MessageDB) DelMessage(pk *[message.SignerPubKeySize]byte) error {
 func (db *MessageDB) ExpireSigners(maxAge int64) (int64, int64, error) {
 	var prepared, deleted int64
 	var err error
-	now := time.Now().Unix()
+	now := CurrentTime()
 	res, err := db.signerPrepareExpireQ.Exec(now)
 	if err != nil {
 		return 0, 0, err

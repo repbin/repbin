@@ -5,7 +5,6 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/repbin/repbin/utils/repproto/structs"
 )
@@ -22,19 +21,19 @@ var testMessage = &structs.MessageStruct{
 	MessageID: *sliceToMessageID([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Message",
 	)),
 	SignerPub: *sliceToEDPublicKey([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Signer",
 	)),
 	PostTime:      10,
-	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireTime:    uint64(CurrentTime() + 1000),
 	ExpireRequest: 291090912,
 	Distance:      2,
 	OneTime:       false,
@@ -102,7 +101,7 @@ func TestMessagesMysql(t *testing.T) {
 		if msgS.Hidden != testMessage.Hidden {
 			t.Error("Hidden no match")
 		}
-		now := time.Now().Unix()
+		now := CurrentTime()
 		expires, err := db.SelectMessageExpire(now)
 		if err != nil {
 			t.Errorf("SelectMessageExpire: %s", err)
@@ -207,7 +206,7 @@ func TestMessagesSQLite(t *testing.T) {
 	if msgS.Hidden != testMessage.Hidden {
 		t.Error("Hidden no match")
 	}
-	now := time.Now().Unix()
+	now := CurrentTime()
 	expires, err := db.SelectMessageExpire(now)
 	if err != nil {
 		t.Errorf("SelectMessageExpire: %s", err)

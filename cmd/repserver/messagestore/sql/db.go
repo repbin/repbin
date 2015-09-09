@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"sync"
+	"time"
 
 	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/hashcash"
@@ -31,6 +32,9 @@ var (
 	// ErrNoModify is returned if a row was not modified
 	ErrNoModify = errors.New("storage: Row not modified")
 )
+
+// CurrentTime returns the current time in UTC
+var CurrentTime = func() int64 { return time.Now().UTC().Unix() }
 
 // MessageDB implements a message database
 type MessageDB struct {
@@ -70,6 +74,9 @@ type MessageDB struct {
 	messageBlobInsertQ     *sql.Stmt
 	messageBlobSelectQ     *sql.Stmt
 	messageBlobDeleteQ     *sql.Stmt
+	messageExistInsertQ    *sql.Stmt
+	messageExistSelectQ    *sql.Stmt
+	messageExistExpireQ    *sql.Stmt
 }
 
 // New returns a new message database. driver is the database driver to use,
@@ -113,6 +120,9 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 		return nil, err
 	}
 	if _, err := mdb.db.Exec(mdb.queries["MessageCounterCreate"]); err != nil {
+		return nil, err
+	}
+	if _, err := mdb.db.Exec(mdb.queries["messageExistCreate"]); err != nil {
 		return nil, err
 	}
 	if mdb.signerInsertQ, err = mdb.db.Prepare(mdb.queries["SignerInsert"]); err != nil {
@@ -205,6 +215,16 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 		return nil, err
 	}
 
+	if mdb.messageExistInsertQ, err = mdb.db.Prepare(mdb.queries["messageExistInsert"]); err != nil {
+		return nil, err
+	}
+	if mdb.messageExistSelectQ, err = mdb.db.Prepare(mdb.queries["messageExistSelect"]); err != nil {
+		return nil, err
+	}
+	if mdb.messageExistExpireQ, err = mdb.db.Prepare(mdb.queries["messageExistExpire"]); err != nil {
+		return nil, err
+	}
+
 	if driver == "mysql" {
 		if mdb.signerUpdateInsertQ, err = mdb.db.Prepare(mdb.queries["UpdateOrInsertSigner"]); err != nil {
 			return nil, err
@@ -217,17 +237,6 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	}
 	mdb.setMutexes()
 	return mdb, nil
-}
-
-func newMySQLForTest(dir string, shards int) (*MessageDB, error) {
-	var url string
-	// MySQL in Travis CI doesn't have a password
-	if os.Getenv("TRAVIS") == "true" {
-		url = "root@/repbin"
-	} else {
-		url = "root:root@/repbin"
-	}
-	return New("mysql", url, dir, shards)
 }
 
 // LockShard locks shard s

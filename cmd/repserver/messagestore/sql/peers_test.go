@@ -5,14 +5,13 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 )
 
 var testPeerPubKey = sliceToEDPublicKey(
 	[]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Peer",
 	),
@@ -21,11 +20,18 @@ var testSignedToken = sliceToProofTokenSigned(
 	[]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Token",
 	),
 )
+
+func diff(a, b int64) int64 {
+	if a > b {
+		return a - b
+	}
+	return b - a
+}
 
 func TestPeersMysql(t *testing.T) {
 	if !testing.Short() {
@@ -72,11 +78,11 @@ func TestPeersMysql(t *testing.T) {
 		if peerData.LastPosition != 2 {
 			t.Errorf("LastPosition bad: %d != %d", 2, peerData.LastPosition)
 		}
-		now := uint64(time.Now().Unix())
-		if now != peerData.LastNotifyFrom && now+1 != peerData.LastNotifyFrom {
+		now := CurrentTime()
+		if diff(now, int64(peerData.LastNotifyFrom)) > 1 {
 			t.Errorf("LastNotifyFrom: %d != %d", now, peerData.LastNotifyFrom)
 		}
-		if now != peerData.LastNotifySend && now+1 != peerData.LastNotifySend {
+		if diff(now, int64(peerData.LastNotifySend)) > 1 {
 			t.Errorf("LastNotifySend: %d != %d", now, peerData.LastNotifySend)
 		}
 	}
@@ -128,11 +134,11 @@ func TestPeersSQLite(t *testing.T) {
 	if peerData.LastPosition != 2 {
 		t.Errorf("LastPosition bad: %d != %d", 2, peerData.LastPosition)
 	}
-	now := uint64(time.Now().Unix())
-	if now != peerData.LastNotifyFrom && now+1 != peerData.LastNotifyFrom {
+	now := CurrentTime()
+	if diff(now, int64(peerData.LastNotifyFrom)) > 1 {
 		t.Errorf("LastNotifyFrom: %d != %d", now, peerData.LastNotifyFrom)
 	}
-	if now != peerData.LastNotifySend && now+1 != peerData.LastNotifySend {
+	if diff(now, int64(peerData.LastNotifySend)) > 1 {
 		t.Errorf("LastNotifySend: %d != %d", now, peerData.LastNotifySend)
 	}
 }

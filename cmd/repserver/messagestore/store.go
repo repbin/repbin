@@ -3,6 +3,7 @@ package messagestore
 
 import (
 	"errors"
+	"time"
 
 	"github.com/repbin/repbin/cmd/repserver/messagestore/sql"
 )
@@ -34,6 +35,9 @@ var MaxAgeSigners = int64(31536000)
 
 // MaxAgeRecipients defines when to delete recipients that are not active anymore
 var MaxAgeRecipients = int64(31536000)
+
+// CurrentTime returns the current time in UTC
+var CurrentTime = func() int64 { return time.Now().UTC().Unix() }
 
 // Store implements a message store
 type Store struct {

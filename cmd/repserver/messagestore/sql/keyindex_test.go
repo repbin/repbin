@@ -5,7 +5,6 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/repbin/repbin/utils/repproto/structs"
 )
@@ -15,19 +14,19 @@ var testIndexMessage = &structs.MessageStruct{
 	MessageID: *sliceToMessageID([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "MessageINDEX",
 	)),
 	SignerPub: *sliceToEDPublicKey([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Signer",
 	)),
 	PostTime:      10,
-	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireTime:    uint64(CurrentTime() + 1000),
 	ExpireRequest: 291090912,
 	Distance:      2,
 	OneTime:       false,
@@ -39,19 +38,19 @@ var testIndexMessage2 = &structs.MessageStruct{
 	MessageID: *sliceToMessageID([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Message2INDEX",
 	)),
 	SignerPub: *sliceToEDPublicKey([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Signer",
 	)),
 	PostTime:      11,
-	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireTime:    uint64(CurrentTime() + 1000),
 	ExpireRequest: 291090912,
 	Distance:      2,
 	OneTime:       false,
@@ -63,19 +62,19 @@ var testIndexMessage3 = &structs.MessageStruct{
 	MessageID: *sliceToMessageID([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Message3INDEX",
 	)),
 	SignerPub: *sliceToEDPublicKey([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Signer",
 	)),
 	PostTime:      12,
-	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireTime:    uint64(CurrentTime() + 1000),
 	ExpireRequest: 291090912,
 	Distance:      2,
 	OneTime:       false,

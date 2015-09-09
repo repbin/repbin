@@ -1,10 +1,6 @@
 package messagestore
 
-import (
-	"time"
-
-	log "github.com/repbin/repbin/deferconsole"
-)
+import log "github.com/repbin/repbin/deferconsole"
 
 // ExpireFromFS expires data based on filesystem last change
 func (store Store) ExpireFromFS() {
@@ -14,7 +10,7 @@ func (store Store) ExpireFromFS() {
 // ExpireFromIndex reads the expire index and expires messages as they are recorded
 func (store Store) ExpireFromIndex(cycles int) {
 	// ExpireRun
-	delMessages, err := store.db.SelectMessageExpire(time.Now().Unix())
+	delMessages, err := store.db.SelectMessageExpire(CurrentTime())
 	if err != nil {
 		log.Errorf("ExpireFromIndex, SelectMessageExpire: %s", err)
 		return
@@ -37,5 +33,9 @@ func (store Store) ExpireFromIndex(cycles int) {
 	err = store.db.ExpireMessageCounter(MaxAgeRecipients)
 	if err != nil {
 		log.Errorf("ExpireFromIndex, ExpireMessageCounter: %s", err)
+	}
+	err = store.db.ForgetMessages(CurrentTime() - MaxAgeRecipients)
+	if err != nil {
+		log.Errorf("ExpireFromIndex, ForgetMessages: %s", err)
 	}
 }

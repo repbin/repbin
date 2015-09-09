@@ -30,7 +30,7 @@ func (ms MessageServer) notifyWatch() {
 			log.Debugs("Check notification.\n")
 			if lastNotify < lastMessage { // both are zero when started
 				log.Debugs("Notify run started.\n")
-				lastNotify = time.Now().Unix()
+				lastNotify = CurrentTime()
 				ms.NotifyPeers()
 			}
 		case <-fetchTick:
@@ -46,7 +46,7 @@ func (ms MessageServer) notifyWatch() {
 			stat.Input <- stat.Show
 		case <-ms.notifyChan:
 			log.Debugs("Notification reason\n")
-			lastMessage = time.Now().Unix()
+			lastMessage = CurrentTime()
 		}
 	}
 }

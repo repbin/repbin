@@ -1,10 +1,6 @@
 package messagestore
 
-import (
-	"time"
-
-	"github.com/repbin/repbin/message"
-)
+import "github.com/repbin/repbin/message"
 
 // PreExpire expires a message in the next expire run
 func (store Store) PreExpire(messageID *[message.MessageIDSize]byte, pubkey *message.Curve25519Key) error {
@@ -13,7 +9,7 @@ func (store Store) PreExpire(messageID *[message.MessageIDSize]byte, pubkey *mes
 		return ErrNotFound
 	}
 	if message.ReceiverConstantPubKey == *pubkey {
-		store.db.SetMessageExpireByID(messageID, int64(time.Now().Unix()))
+		store.db.SetMessageExpireByID(messageID, int64(CurrentTime()))
 		return nil
 	}
 	return ErrNotFound

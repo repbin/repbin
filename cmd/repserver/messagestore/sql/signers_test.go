@@ -5,7 +5,6 @@ import (
 	"path"
 	"strconv"
 	"testing"
-	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
@@ -18,7 +17,7 @@ var testSigner = &structs.SignerStruct{
 		[]byte(
 			strconv.Itoa(
 				int(
-					time.Now().Unix(),
+					CurrentTime(),
 				),
 			),
 		),
@@ -127,7 +126,7 @@ func TestSignerMysql(t *testing.T) {
 			[]byte(
 				strconv.Itoa(
 					int(
-						time.Now().Unix(),
+						CurrentTime(),
 					),
 				) + "-new",
 			),
@@ -192,7 +191,7 @@ func TestSignersSQLite(t *testing.T) {
 		[]byte(
 			strconv.Itoa(
 				int(
-					time.Now().Unix(),
+					CurrentTime(),
 				),
 			) + "-new",
 		),

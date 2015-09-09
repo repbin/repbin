@@ -148,7 +148,7 @@ func (ms MessageServer) notifyPeer(PubKey *[ed25519.PublicKeySize]byte, url stri
 		sleeptime := rand.Int63() % maxSleep
 		time.Sleep(time.Duration(sleeptime) * time.Second)
 	}
-	now := time.Now().Unix() + ms.TimeSkew
+	now := CurrentTime() + ms.TimeSkew
 	token := utils.B58encode(keyproof.SignProofToken(now, PubKey, ms.TokenPubKey, ms.TokenPrivKey)[:])
 	// Socks call
 	proto := repproto.New(ms.SocksProxy, "")
@@ -188,7 +188,7 @@ func (ms MessageServer) fetchPeer(PubKey *[ed25519.PublicKeySize]byte, url strin
 		log.Debugf("fetch from peer: no notification %x\n", *PubKey)
 		return
 	}
-	startDate := time.Now().Unix()
+	startDate := CurrentTime()
 	// Check that LastNotifyFrom > LastFetch
 	if ms.HubOnly {
 		// Pre-Emptive fetch in hub-mode: every 4 times FetchDuration or when notified
@@ -239,7 +239,7 @@ FetchLoop:
 	MessageLoop:
 		for _, msg := range messages {
 			log.Debugf("Fetching.  %d  %s\n", msg.Counter, utils.B58encode(msg.MessageID[:]))
-			if startDate+ms.FetchDuration <= time.Now().Unix() { // We worked for long enough
+			if startDate+ms.FetchDuration <= CurrentTime() { // We worked for long enough
 				log.Debugf("FetchDuration timeout\n")
 				break MessageLoop
 			}
@@ -272,7 +272,7 @@ FetchLoop:
 			log.Debugf("Sync done. No More.\n")
 			break FetchLoop
 		}
-		if startDate+ms.FetchDuration <= time.Now().Unix() { // We worked for long enough
+		if startDate+ms.FetchDuration <= CurrentTime() { // We worked for long enough
 			log.Debugf("Sync done. FetchDuration timeout.\n")
 			break FetchLoop
 		}
@@ -280,7 +280,7 @@ FetchLoop:
 	// Write peer update
 	log.Debugf("fetch from peer: cycle done %x\n", *PubKey)
 	if doUpdate {
-		ms.DB.UpdatePeerFetchStat(PubKey, uint64(time.Now().Unix()), peerStat.LastPosition, peerStat.ErrorCount)
+		ms.DB.UpdatePeerFetchStat(PubKey, uint64(CurrentTime()), peerStat.LastPosition, peerStat.ErrorCount)
 	} else {
 		ms.DB.UpdatePeerFetchStat(PubKey, peerStat.LastFetch, peerStat.LastPosition, peerStat.ErrorCount)
 	}

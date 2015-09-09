@@ -7,39 +7,44 @@ a new user on the system.
 
 ## Basic installation of a standalone server
 
-0. The server's filesystem must support symlinks and chtimes
+0. Install/Compile the binary, as described in [doc/COMPILE.md](https://github.com/repbin/repbin/blob/master/doc/COMPILE.md)
 
-1. Install/Compile the binary, as described in [doc/COMPILE.md](https://github.com/repbin/repbin/blob/master/doc/COMPILE.md)
-
-2. Configure Tor to point a hidden service to 127.0.0.1:Port (Port is the port
+1. Configure Tor to point a hidden service to 127.0.0.1:Port (Port is the port
    number of the repserver). Make sure that you restart Tor to have it generate
    the hostname of the hidden service.
 
-3. Create a new user specifically and exclusively for repbin usage. It should have minimum access
+2. Create a new user specifically and exclusively for repbin usage. It should have minimum access
     to filesystem resources.
 
-4. Change to the new user
+3. Change to the new user
 
-5. Create a new directory for the user to store message data in:
+4. Create a new directory for the user to store message data in:
 
 ```
 	STOREDIR=/path/to/userhome/store/
 	mkdir $STOREDIR
 ```
 
-6. Create initial configuration file:
+5. Create initial configuration file:
 
 ```
 	repserver --showconfig > repserver.config
 ```
 
-7. Edit the configuration file to change the storage path. Change the value of
+6. Edit the configuration file to change the storage path. Change the value of
 	 "StoragePath" to the absolute path of `$STOREDIR`. Make sure the value ends
 	 with a slash (/).
 
-8. If needed, change the SocksProxy entry to the URL of your Tor client.
+7. Change the `DBDriver` setting in the config file to either `sqlite3` or `mysql`
+	 depending on which database backend you want to use. We recommend sqlite3.
 
-9. Change the values of EnableDeleteHandler and EnableOneTimeHander to true IF
+8. Change the `DBURL` to the absolute path to the sqlite database file - if you are 
+	 using sqlite as the database backend. If you use mysql, change it to 
+	 `<DB-User>:<DB-Password>@<DB-Host>/<database-name>` (change the values accordingly).
+
+9. If needed, change the SocksProxy entry to the URL of your Tor client.
+
+10. Change the values of EnableDeleteHandler and EnableOneTimeHander to true IF
 	 you want these features. EnableOneTimeHander adds the ability to delete
 	 messages from the server by anybody knowing the Message-ID and the constant
 	 private key of the message. This is not a good idea unless you have pressing
@@ -48,23 +53,23 @@ a new user on the system.
 	 the first time. This is of dubious security. We recommend keeping both
 	 settings switched off ("false").
 
-10. Change the ListenPort entry to an unused TCP port on localhost. This must be
+11. Change the ListenPort entry to an unused TCP port on localhost. This must be
     the port that the hiddenservice configuration of Tor points to.
 
-11. Change the URL setting to the _full URL_ of your Tor hidden service (it
+12. Change the URL setting to the _full URL_ of your Tor hidden service (it
 		should look similar to this: http://abcdefghijkl.onion/" - note the leading
 		schema and the trailing slash).
 
-12. Do not modify other entries unless you know exactly what you do. Save your
+13. Do not modify other entries unless you know exactly what you do. Save your
     changes to file.
 
-13. Start the server:
+14. Start the server:
 
 ```
 	repserver --configfile repserver.config --verbose --start
 ```
 
-14. You're done. The server does not go into the background itself.
+15. You're done. The server does not go into the background itself.
     Put it into background manually or run it in a screen/tmux session.
 
 Client's need to use the onion address of your hidden service by either changing
@@ -92,27 +97,6 @@ example) so that:
 You can change the peers.config file while the server is running. It will be
 reloaded automatically. Errors in the format of the file will lead to peering
 becoming unavailable until a well-formatted file is reloaded again.
-
-
-## Administration tasks
-
-repserver should clean up house itself, but it will leave some files forever.
-Please plan for enough space. Do **not** move the files or you will destroy the
-chtime of the files (unless you know how to use tar, touch, cp etc). The chtime
-is required for part of the housecleaning process. Changing it will lead to
-files that linger for too long.
-
-After repserver has received his first files and/or peered with other
-repservers, the `$STOREDIR` will contain a number of directories containing
-various files. These files are paged textfiles (every entry is of a defined
-length). Changing any of the files manually can lead to strange results,
-including making the system unusable or breaking limits and access limitations.
-Great care is required if manual changes are required.
-
-File that **might** required changes are in the peers directory. Every peer has his
-own file here that keeps track of peer status. If a peer is reset (by deleting
-his posts), the peer status needs to be reset as well. The easiest method is to
-find the peer and delete his status file. Other changes are simply dangerous.
 
 
 ## Security
