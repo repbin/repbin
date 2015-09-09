@@ -9,7 +9,7 @@ import (
 
 // AddToGlobalIndex adds a message to the global index
 func (db *MessageDB) AddToGlobalIndex(id uint64) error {
-	now := time.Now().Unix()
+	now := CurrentTime()
 	// globalIndexAdd: INSERT INTO globalindex (Message, EntryTime) VALUES (?, ?);
 	return updateConvertNilError(db.globalIndexAddQ.Exec(id, now))
 }

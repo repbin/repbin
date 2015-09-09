@@ -11,7 +11,7 @@ import (
 var learnMessageID = sliceToMessageID([]byte(
 	strconv.Itoa(
 		int(
-			time.Now().Unix(),
+			CurrentTime(),
 		),
 	) + "Message",
 ))
@@ -45,7 +45,7 @@ func TestLearnMysql(t *testing.T) {
 		if !db.MessageKnown(learnMessageID) {
 			t.Error("Existent message not found")
 		}
-		err = db.ForgetMessages(time.Now().Unix())
+		err = db.ForgetMessages(CurrentTime())
 		if err != nil {
 			t.Fatalf("ForgetMessages: %s", err)
 		}
@@ -74,7 +74,7 @@ func TestLearnSQLite(t *testing.T) {
 	if !db.MessageKnown(learnMessageID) {
 		t.Error("Existent message not found")
 	}
-	err = db.ForgetMessages(time.Now().Unix())
+	err = db.ForgetMessages(CurrentTime())
 	if err != nil {
 		t.Fatalf("ForgetMessages: %s", err)
 	}

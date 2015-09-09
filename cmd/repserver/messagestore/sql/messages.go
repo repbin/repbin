@@ -13,7 +13,7 @@ func (db *MessageDB) messageNextCounter(receiver *message.Curve25519Key) (uint64
 	var id sql.NullInt64
 	db.LockShard(receiver[:])
 	defer db.UnlockShard(receiver[:])
-	now := time.Now().Unix()
+	now := CurrentTime()
 	rec := toHex(receiver[:])
 	err := db.nextMessageCounterQ.QueryRow(rec).Scan(&id)
 	if err != nil {
@@ -36,7 +36,7 @@ func (db *MessageDB) messageNextCounter(receiver *message.Curve25519Key) (uint64
 // ExpireMessageCounter expires all messagecounters (and thus resets key indices) that are older than
 // maxAge seconds
 func (db *MessageDB) ExpireMessageCounter(maxAge int64) error {
-	expireDate := int64(time.Now().Unix()) - maxAge
+	expireDate := int64(CurrentTime()) - maxAge
 	_, err := db.expireMessageCounterQ.Exec(expireDate)
 	return err
 }

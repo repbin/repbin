@@ -16,19 +16,19 @@ var testBlobMessage = &structs.MessageStruct{
 	MessageID: *sliceToMessageID([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "MessageBlob",
 	)),
 	SignerPub: *sliceToEDPublicKey([]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "SignerBlob",
 	)),
 	PostTime:      10,
-	ExpireTime:    uint64(time.Now().Unix() + 1000),
+	ExpireTime:    uint64(CurrentTime() + 1000),
 	ExpireRequest: 291090912,
 	Distance:      2,
 	OneTime:       false,

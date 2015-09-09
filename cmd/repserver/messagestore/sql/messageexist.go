@@ -8,7 +8,7 @@ import (
 
 // LearnMessage records a message to be known
 func (db *MessageDB) LearnMessage(mid *[message.MessageIDSize]byte) error {
-	now := time.Now().Unix()
+	now := CurrentTime()
 	return updateConvertNilError(db.messageExistInsertQ.Exec(toHex(mid[:]), now))
 }
 

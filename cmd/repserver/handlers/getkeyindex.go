@@ -80,7 +80,7 @@ func (ms MessageServer) GetKeyIndex(w http.ResponseWriter, r *http.Request) {
 		}
 		answer := [keyauth.AnswerSize]byte{}
 		copy(answer[:], auth)
-		now := uint64(time.Now().Unix() + ms.TimeSkew)
+		now := uint64(CurrentTime() + ms.TimeSkew)
 		if !keyauth.VerifyTime(&answer, now, ms.TimeGrace) {
 			log.Debugs("List:Auth timeout\n")
 			io.WriteString(w, "ERROR: Authentication failed: Timeout\n")

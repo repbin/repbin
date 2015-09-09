@@ -41,8 +41,8 @@ func (store Store) Put(msgStruct *structs.MessageStruct, signerStruct *structs.S
 		// Retention is changed by expiring messages
 		return ErrPostLimit
 	}
-	msgStruct.PostTime = uint64(time.Now().Unix())
-	msgStruct.ExpireTime = uint64(uint64(time.Now().Unix()) + signerStruct.ExpireTarget)
+	msgStruct.PostTime = uint64(CurrentTime())
+	msgStruct.ExpireTime = uint64(uint64(CurrentTime()) + signerStruct.ExpireTarget)
 	if msgStruct.ExpireTime < msgStruct.ExpireRequest {
 		msgStruct.ExpireTime = msgStruct.ExpireRequest
 	}

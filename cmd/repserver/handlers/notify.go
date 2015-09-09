@@ -43,7 +43,7 @@ func (ms MessageServer) GetNotify(w http.ResponseWriter, r *http.Request) {
 				log.Errorf("Notify, bad peer: %x\n", *senderPubKey)
 				return
 			}
-			now := time.Now().Unix()
+			now := CurrentTime()
 			// Test too old, too young
 			if enforceTimeOuts && (now > timeStamp+DefaultAuthTokenAge+ms.MaxTimeSkew || now < timeStamp-DefaultAuthTokenAge-ms.MaxTimeSkew) {
 				io.WriteString(w, "ERROR: Authentication expired\n")

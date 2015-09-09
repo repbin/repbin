@@ -14,7 +14,7 @@ func (store Store) ExpireFromFS() {
 // ExpireFromIndex reads the expire index and expires messages as they are recorded
 func (store Store) ExpireFromIndex(cycles int) {
 	// ExpireRun
-	delMessages, err := store.db.SelectMessageExpire(time.Now().Unix())
+	delMessages, err := store.db.SelectMessageExpire(CurrentTime())
 	if err != nil {
 		log.Errorf("ExpireFromIndex, SelectMessageExpire: %s", err)
 		return
@@ -38,7 +38,7 @@ func (store Store) ExpireFromIndex(cycles int) {
 	if err != nil {
 		log.Errorf("ExpireFromIndex, ExpireMessageCounter: %s", err)
 	}
-	err = store.db.ForgetMessages(time.Now().Unix() - MaxAgeRecipients)
+	err = store.db.ForgetMessages(CurrentTime() - MaxAgeRecipients)
 	if err != nil {
 		log.Errorf("ExpireFromIndex, ForgetMessages: %s", err)
 	}

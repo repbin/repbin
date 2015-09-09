@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"sync"
+	"time"
 
 	"github.com/agl/ed25519"
 	"github.com/repbin/repbin/hashcash"
@@ -31,6 +32,9 @@ var (
 	// ErrNoModify is returned if a row was not modified
 	ErrNoModify = errors.New("storage: Row not modified")
 )
+
+// CurrentTime returns the current time in UTC
+var CurrentTime = func() int64 { return time.Now().UTC().Unix() }
 
 // MessageDB implements a message database
 type MessageDB struct {

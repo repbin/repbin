@@ -76,6 +76,9 @@ var (
 var Workers = 100
 var enforceTimeOuts = true
 
+// CurrentTime returns the current time in UTC
+var CurrentTime = func() int64 { return time.Now().UTC().Unix() }
+
 // MessageServer provides handlers.
 type MessageServer struct {
 	DB                   *messagestore.Store
@@ -226,7 +229,7 @@ func (ms MessageServer) RandomSleep() {
 // ServeID returns server information.
 func (ms MessageServer) ServeID(w http.ResponseWriter, r *http.Request) {
 	ms.RandomSleep()
-	now := time.Now().Unix() + ms.TimeSkew
+	now := CurrentTime() + ms.TimeSkew
 	privK := [32]byte(*ms.authPrivKey)
 	_, pubkey, challenge := keyauth.GenTempKeyTime(uint64(now), &privK)
 	info := &ServerInfo{

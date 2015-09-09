@@ -86,7 +86,7 @@ func (ms MessageServer) AuthenticatePeer(authStr string) error {
 		log.Debugs("List:Auth no verify\n")
 		return fmt.Errorf("Authentication failed: No match")
 	}
-	now := time.Now().Unix()
+	now := CurrentTime()
 	if enforceTimeOuts && (timestamp < now-ms.MaxAuthTokenAge-ms.MaxTimeSkew || timestamp > now+ms.MaxAuthTokenAge+ms.MaxTimeSkew) {
 		return fmt.Errorf("Authentication failed: Timeout")
 	}

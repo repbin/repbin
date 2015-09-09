@@ -13,7 +13,7 @@ func (store Store) PreExpire(messageID *[message.MessageIDSize]byte, pubkey *mes
 		return ErrNotFound
 	}
 	if message.ReceiverConstantPubKey == *pubkey {
-		store.db.SetMessageExpireByID(messageID, int64(time.Now().Unix()))
+		store.db.SetMessageExpireByID(messageID, int64(CurrentTime()))
 		return nil
 	}
 	return ErrNotFound
