@@ -44,7 +44,9 @@ func (db *MessageDB) InsertBlobFS(messageID *[message.MessageIDSize]byte, data [
 	dirname, filename := db.messageIDToFilename(messageID)
 	err := ioutil.WriteFile(filename, data, 0600)
 	if err != nil {
-		os.MkdirAll(dirname, 0700)
+		if err := os.MkdirAll(dirname, 0700); err != nil {
+			return err
+		}
 		err = ioutil.WriteFile(filename, data, 0600)
 	}
 	return err

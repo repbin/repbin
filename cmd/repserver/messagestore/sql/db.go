@@ -84,7 +84,9 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	var db *sql.DB
 	var err error
 	if driver == "sqlite3" {
-		os.MkdirAll(path.Dir(url), 0700)
+		if err := os.MkdirAll(path.Dir(url), 0700); err != nil {
+			return nil, err
+		}
 	}
 	db, err = sql.Open(driver, url)
 	if err != nil {
@@ -231,6 +233,17 @@ func New(driver, url, dir string, shards int) (*MessageDB, error) {
 	}
 	mdb.setMutexes()
 	return mdb, nil
+}
+
+func newMySQLForTest(dir string, shards int) (*MessageDB, error) {
+	var url string
+	// MySQL in Travis CI doesn't have a password
+	if os.Getenv("TRAVIS") == "true" {
+		url = "root@/repbin"
+	} else {
+		url = "root:root@/repbin"
+	}
+	return New("mysql", url, dir, shards)
 }
 
 // LockShard locks shard s
