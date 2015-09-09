@@ -158,7 +158,7 @@ var (
 		},
 		"sqlite3": map[string]string{
 			"SignerCreate": `CREATE TABLE IF NOT EXISTS signer (
-                    ID INTEGER PRIMARY KEY,
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     PublicKey VARCHAR(` + strconv.FormatInt(message.SignerPubKeySize*2, 10) + `) NOT NULL,
                     Nonce VARCHAR(` + strconv.FormatInt(hashcash.NonceSize*2, 10) + `) NOT NULL,
                     Bits INT NOT NULL DEFAULT 0,
@@ -201,7 +201,7 @@ var (
                 WHERE LastMessageDeleted!=0 AND LastMessageDeleted<?
                 ;`,
 			"PeerCreate": `CREATE TABLE IF NOT EXISTS peer (
-                    ID INTEGER PRIMARY KEY,
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     PublicKey VARCHAR(` + strconv.FormatInt(ed25519.PublicKeySize*2, 10) + `) NOT NULL,
                     AuthToken TEXT NOT NULL DEFAULT "",
                     LastNotifySend BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -217,7 +217,7 @@ var (
 			"UpdateTokenPeer":  `UPDATE peer SET LastNotifyFrom=?, Authtoken=? WHERE PublicKey=?;`,
 			"SelectPeer":       `SELECT AuthToken, LastNotifySend, LastNotifyFrom, LastFetch, ErrorCount, LastPosition FROM peer WHERE PublicKey=?;`,
 			"MessageCreate": `CREATE TABLE IF NOT EXISTS message (
-                    ID INTEGER PRIMARY KEY,
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     Counter BIGINT UNSIGNED NOT NULL DEFAULT 0,
                     MessageID VARCHAR(` + strconv.FormatInt(message.MessageIDSize*2, 10) + `) NOT NULL,
                     ReceiverConstantPubKey VARCHAR(` + strconv.FormatInt(message.Curve25519KeySize*2, 10) + `) NOT NULL,
@@ -255,7 +255,7 @@ var (
 			"InsertMessageCounter":   `INSERT INTO messageCounter (ReceiverConstantPubKey, LastTime) VALUES (?,? );`,
 			"ExpireMessageCounter":   `DELETE FROM messageCounter WHERE LastTime<?;`,
 			"GlobalIndexCreate": `CREATE TABLE IF NOT EXISTS globalindex (
-                    ID INTEGER PRIMARY KEY,
+                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
                     Message BIGINT UNSIGNED NOT NULL,
                     EntryTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
                     UNIQUE (Message),
