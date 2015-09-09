@@ -12,7 +12,7 @@ var testPeerPubKey = sliceToEDPublicKey(
 	[]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Peer",
 	),
@@ -21,7 +21,7 @@ var testSignedToken = sliceToProofTokenSigned(
 	[]byte(
 		strconv.Itoa(
 			int(
-				time.Now().Unix(),
+				CurrentTime(),
 			),
 		) + "Token",
 	),
@@ -79,7 +79,7 @@ func TestPeersMysql(t *testing.T) {
 		if peerData.LastPosition != 2 {
 			t.Errorf("LastPosition bad: %d != %d", 2, peerData.LastPosition)
 		}
-		now := time.Now().Unix()
+		now := CurrentTime()
 		if diff(now, int64(peerData.LastNotifyFrom)) > 1 {
 			t.Errorf("LastNotifyFrom: %d != %d", now, peerData.LastNotifyFrom)
 		}
@@ -135,7 +135,7 @@ func TestPeersSQLite(t *testing.T) {
 	if peerData.LastPosition != 2 {
 		t.Errorf("LastPosition bad: %d != %d", 2, peerData.LastPosition)
 	}
-	now := time.Now().Unix()
+	now := CurrentTime()
 	if diff(now, int64(peerData.LastNotifyFrom)) > 1 {
 		t.Errorf("LastNotifyFrom: %d != %d", now, peerData.LastNotifyFrom)
 	}
