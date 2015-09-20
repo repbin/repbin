@@ -145,7 +145,7 @@ func (cfg *config) addSender(addSender, configFile string) error {
 	return nil
 }
 
-func (cfg *config) getList() ([]string, bool, error) {
+func (cfg *config) getList() (list []string, more bool, err error) {
 	cmd := exec.Command("repclient",
 		"--index",
 		"--server", cfg.Server,
@@ -168,8 +168,6 @@ func (cfg *config) getList() ([]string, bool, error) {
 		fmt.Print(out.String())
 		return nil, false, err
 	}
-	var list []string
-	var more bool
 	lines := strings.Split(out.String(), "\n")
 	for _, line := range lines {
 		parts := strings.Split(line, "\t")
@@ -194,7 +192,7 @@ func (cfg *config) getList() ([]string, bool, error) {
 			}
 		}
 	}
-	return list, more, nil
+	return
 }
 
 func (cfg *config) getSenderKeys() map[string]senderKey {
