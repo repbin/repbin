@@ -3,7 +3,7 @@ package messagestore
 import log "github.com/repbin/repbin/deferconsole"
 
 // ExpireFromIndex reads the expire index and expires messages as they are recorded
-func (store Store) ExpireFromIndex(cycles int) {
+func (store Store) ExpireFromIndex() {
 	// ExpireRun
 	delMessages, err := store.db.SelectMessageExpire(CurrentTime())
 	if err != nil {
