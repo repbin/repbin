@@ -49,12 +49,10 @@ const (
 	DefaultStepLimit = 2
 	// DefaultExpireDuration is the time between expire runs
 	DefaultExpireDuration = 3600
-	// DefaultExpireFSDuration is the time between filesystem expire runs
-	DefaultExpireFSDuration = 86400 // once a day. Should be infrequent since it is expensive
 	// DefaultMaxTimeSkew is the maximum time skew to allow and use
 	DefaultMaxTimeSkew = 86400
 	// DefaultMinStoreTime is the minimum time to store a message, in seconds
-	DefaultMinStoreTime = 7200
+	DefaultMinStoreTime = 86400
 	// DefaultMaxStoreTime is the maximum time to ever store a message, in seconds
 	DefaultMaxStoreTime = 2592000
 	// DefaultAddToPeer determines if the server adds itself to the peerlist
@@ -105,7 +103,6 @@ type MessageServer struct {
 	FetchDuration        int64  // Time between fetches
 	FetchMax             int    // Maximum messages to fetch per call to peer
 	ExpireDuration       int64  // Time between expire runs
-	ExpireFSDuration     int64  // Time between filesystem expire runs
 	SocksProxy           string // Socks5 proxy
 	EnableDeleteHandler  bool   // should the delete handler be enabled?
 	EnableOneTimeHandler bool   // should the one-time message handler be enabled?
@@ -157,7 +154,6 @@ func New(driver, url, path string, pubKey, privKey []byte) (*MessageServer, erro
 	ms.FetchDuration = DefaultFetchDuration
 	ms.FetchMax = DefaultFetchMax
 	ms.ExpireDuration = DefaultExpireDuration
-	ms.ExpireFSDuration = DefaultExpireFSDuration
 	ms.StepLimit = DefaultStepLimit
 	ms.ListenPort = DefaultListenPort
 	ms.MinStoreTime = DefaultMinStoreTime

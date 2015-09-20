@@ -18,7 +18,6 @@ func (ms MessageServer) notifyWatch() {
 	notifyTick := time.Tick(time.Duration(ms.NotifyDuration) * time.Second)
 	fetchTick := time.Tick(time.Duration(ms.FetchDuration) * time.Second)
 	expireTick := time.Tick(time.Duration(ms.ExpireDuration) * time.Second)
-	expireFSTick := time.Tick(time.Duration(ms.ExpireFSDuration) * time.Second)
 	var statTick <-chan time.Time
 	if ms.Stat {
 		// show statistics once a minute
@@ -39,9 +38,6 @@ func (ms MessageServer) notifyWatch() {
 		case <-expireTick:
 			log.Debugs("Expire run started.\n")
 			ms.DB.ExpireFromIndex(2) // we go back at most 2 cycles
-		case <-expireFSTick:
-			log.Debugs("ExpireFS run started.\n")
-			ms.DB.ExpireFromFS()
 		case <-statTick:
 			stat.Input <- stat.Show
 		case <-ms.notifyChan:

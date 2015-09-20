@@ -21,7 +21,6 @@ type ServerConfig struct {
 	NotifyDuration       int64  // Time between notifications
 	FetchDuration        int64  // Time between fetches
 	ExpireDuration       int64  // Time between expire runs
-	ExpireFSDuration     int64  // Time between filesystem expire runs
 	SocksProxy           string // Socks5 proxy
 	EnableDeleteHandler  bool   // should the delete handler be enabled?
 	EnableOneTimeHandler bool   // should the one-time message handler be enabled?
@@ -47,7 +46,6 @@ var defaultSettings = &ServerConfig{
 	NotifyDuration:       handlers.DefaultNotifyDuration,
 	FetchDuration:        handlers.DefaultFetchDuration,
 	ExpireDuration:       handlers.DefaultExpireDuration,
-	ExpireFSDuration:     handlers.DefaultExpireFSDuration,
 	StepLimit:            handlers.DefaultStepLimit,
 	ListenPort:           handlers.DefaultListenPort,
 	EnableDeleteHandler:  false,
@@ -99,7 +97,6 @@ func applyConfig(ms *handlers.MessageServer) {
 	ms.NotifyDuration = defaultSettings.NotifyDuration
 	ms.FetchDuration = defaultSettings.FetchDuration
 	ms.ExpireDuration = defaultSettings.ExpireDuration
-	ms.ExpireFSDuration = defaultSettings.ExpireFSDuration
 	ms.StepLimit = defaultSettings.StepLimit
 	ms.ListenPort = defaultSettings.ListenPort
 	ms.MinStoreTime = defaultSettings.MinStoreTime
