@@ -1,0 +1,72 @@
+BEGIN TRANSACTION;
+
+CREATE TABLE signerfix (
+ID INTEGER PRIMARY KEY AUTOINCREMENT,
+PublicKey VARCHAR(64) NOT NULL,
+Nonce VARCHAR(16) NOT NULL,
+Bits INT NOT NULL DEFAULT 0,
+MessagesPosted BIGINT NOT NULL DEFAULT 0,
+MessagesRetained BIGINT NOT NULL DEFAULT 0,
+MaxMessagesPosted BIGINT UNSIGNED NOT NULL DEFAULT 0,
+MaxMessagesRetained BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ExpireTarget BIGINT UNSIGNED NOT NULL DEFAULT 0,
+LastMessageDeleted BIGINT UNSIGNED NOT NULL DEFAULT 0,
+UNIQUE (PublicKey)
+);
+
+
+CREATE TABLE IF NOT EXISTS peerfix (
+ID INTEGER PRIMARY KEY AUTOINCREMENT,
+PublicKey VARCHAR(64) NOT NULL,
+AuthToken TEXT NOT NULL DEFAULT "",
+LastNotifySend BIGINT UNSIGNED NOT NULL DEFAULT 0,
+LastNotifyFrom BIGINT UNSIGNED NOT NULL DEFAULT 0,
+LastFetch BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ErrorCount BIGINT UNSIGNED NOT NULL DEFAULT 0,
+LastPosition BIGINT UNSIGNED NOT NULL DEFAULT 0,
+UNIQUE (PublicKey)
+);
+
+
+CREATE TABLE IF NOT EXISTS messagefix (
+ID INTEGER PRIMARY KEY AUTOINCREMENT,
+Counter BIGINT UNSIGNED NOT NULL DEFAULT 0,
+MessageID VARCHAR(64) NOT NULL,
+ReceiverConstantPubKey VARCHAR(64) NOT NULL,
+SignerPub VARCHAR(64) NOT NULL,
+PostTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ExpireTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ExpireRequest BIGINT UNSIGNED NOT NULL DEFAULT 0,
+Distance BIGINT UNSIGNED NOT NULL DEFAULT 0,
+OneTime TINYINT UNSIGNED NOT NULL DEFAULT 1,
+Sync TINYINT UNSIGNED NOT NULL DEFAULT 0,
+Hidden TINYINT UNSIGNED NOT NULL DEFAULT 1,
+UNIQUE (Counter, ReceiverConstantPubKey),
+UNIQUE (MessageID)
+);
+
+CREATE TABLE IF NOT EXISTS globalindexfix (
+ID INTEGER PRIMARY KEY AUTOINCREMENT,
+Message BIGINT UNSIGNED NOT NULL,
+EntryTime BIGINT UNSIGNED NOT NULL DEFAULT 0,
+UNIQUE (Message),
+FOREIGN KEY (Message) REFERENCES message(ID) ON DELETE CASCADE
+);
+
+
+INSERT INTO signerfix (ID,PublicKey,Nonce,Bits,MessagesPosted,MessagesRetained,MaxMessagesPosted,MaxMessagesRetained,ExpireTarget,LastMessageDeleted) SELECT ID,PublicKey,Nonce,Bits,MessagesPosted,MessagesRetained,MaxMessagesPosted,MaxMessagesRetained,ExpireTarget,LastMessageDeleted FROM signer;
+INSERT INTO peerfix (ID,PublicKey,AuthToken,LastNotifySend,LastNotifyFrom,LastFetch,ErrorCount,LastPosition) SELECT ID,PublicKey,AuthToken,LastNotifySend,LastNotifyFrom,LastFetch,ErrorCount,LastPosition FROM peer;
+INSERT INTO messagefix (ID,Counter,MessageID,ReceiverConstantPubKey,SignerPub,PostTime,ExpireTime,ExpireRequest,Distance,OneTime,Sync,Hidden) SELECT ID,Counter,MessageID,ReceiverConstantPubKey,SignerPub,PostTime,ExpireTime,ExpireRequest,Distance,OneTime,Sync,Hidden FROM message;
+INSERT INTO globalindexfix (ID,Message,EntryTime) SELECT ID,Message,EntryTime FROM globalindex;
+
+
+DROP TABLE signer;
+ALTER TABLE signerfix RENAME TO signer;
+DROP TABLE peer;
+ALTER TABLE peerfix RENAME TO peer;
+DROP TABLE message;
+ALTER TABLE messagefix RENAME TO message;
+DROP TABLE globalindex;
+ALTER TABLE globalindexfix RENAME TO globalindex;
+
+// COMMIT TRANSACTION;

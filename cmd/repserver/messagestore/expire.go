@@ -2,11 +2,6 @@ package messagestore
 
 import log "github.com/repbin/repbin/deferconsole"
 
-// ExpireFromFS expires data based on filesystem last change
-func (store Store) ExpireFromFS() {
-	store.ExpireFromIndex(0)
-}
-
 // ExpireFromIndex reads the expire index and expires messages as they are recorded
 func (store Store) ExpireFromIndex(cycles int) {
 	// ExpireRun
