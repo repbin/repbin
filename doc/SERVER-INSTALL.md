@@ -25,7 +25,8 @@ a new user on the system.
 	mkdir $STOREDIR
 ```
 
-* Create initial configuration file:
+* Create initial configuration file
+  (options are described [below](#server-configuration)):
 
 ```
 	repserver --showconfig > repserver.config
@@ -115,3 +116,31 @@ files into it. These files will be served as with any other standard websert. It
 does however not support dynamic content, redirects and similar features. Just
 create `$STOREDIR/static/index.html` to speak to the world!
 
+
+## Server configuration
+
+Documentation of the configuration file options passed to `repserver --configfile`:
+
+* "URL": Public URL of the repbin server.
+* "AddToPeer": If to add this server to the peerlist when asked (bootstrap only server == no).
+* "MaxTimeSkew": Maximum difference between real and "virtual" time of the server.
+* "MinHashCashBits": Minimum hashcash bits to require for messages.
+* "NotifyDuration": Seconds between notification runs (sending notifications to other servers).
+* "FetchDuration": Seconds between fetch runs (downloding lists and messages from other servers).
+* "ExpireDuration": Seconds between runs of the expire code.
+* "SocksProxy": URL (including schema) of the local SOCKS proxy connecting to the TOR network.
+* "EnableDeleteHandler": Should the delete handler be activated so that people knowing the private keys of a message can forcibly add it to the next expire run?
+* "EnableOneTimeHandler": Should the handler for one-time messages be activated? This allows posting of messages that are deleted immediately on fetch (burn after reading). Requires client support.
+* "EnablePeerHandler": Return a list of peers on ID requests. For bootstrap servers.
+* "HubOnly": Only allow other peers to fetch and fetch from other peers, do not accept client interaction.
+* "StepLimit": Minimum additional bits over MinHashCashBits before extra hashcash bits receive a bonus > 2.
+* "ListenPort": Port to listen on (IP 127.0.0.1).
+* "StoragePath": Absolute path to storage.
+* "MinStoreTime": Minimum time a message can be stored. Part of the hashcash cost calculation.
+* "MaxStoreTime": Maximum time a message may be stored on the server.
+* "PeeringPublicKey": The public key of the server for peer identification.
+* "PeeringPrivateKey": The private key of the server for peer identification.
+* "DBDriver": The database driver. Can be sqlite3 or mysql.
+* "DBURL": The URL of the database. For sqlite3: Path to database file. For mysql: connection URL: username:password@server:port/database
+* "MaxAgeSigners": Maximum number of seconds to cache signer information. Must be high.
+* "MaxAgeRecipients": Maximum numbre of seconds to cache RecipientConstantPublicKey information for key indeces. Must be high.
