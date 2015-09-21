@@ -143,4 +143,4 @@ Documentation of the configuration file options passed to `repserver --configfil
 * "DBDriver": The database driver. Can be sqlite3 or mysql.
 * "DBURL": The URL of the database. For sqlite3: Path to database file. For mysql: connection URL: username:password@server:port/database
 * "MaxAgeSigners": Maximum number of seconds to cache signer information. Must be high.
-* "MaxAgeRecipients": Maximum numbre of seconds to cache RecipientConstantPublicKey information for key indeces. Must be high.
+* "MaxAgeRecipients": Maximum number of seconds to cache RecipientConstantPublicKey information for key indeces. Must be high.
