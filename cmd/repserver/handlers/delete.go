@@ -41,7 +41,7 @@ func (ms MessageServer) Delete(w http.ResponseWriter, r *http.Request) {
 			publicKey := message.GenPubKey(privateKey)
 			err := ms.DB.PreExpire(messageID, publicKey)
 			if err == nil {
-				log.Errorf("Message censored: %x, asshole.\n", *messageID)
+				log.Errorf("Message censored: %s, asshole.\n", utils.B58encode(messageID[:]))
 				io.WriteString(w, "SUCCESS: If you want to call it that\n")
 				return
 			}

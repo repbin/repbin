@@ -55,7 +55,7 @@ func (ms MessageServer) Fetch(w http.ResponseWriter, r *http.Request) {
 		log.Debugf("Write: %s\n", err)
 		return
 	}
-	log.Debugs("Fetch OK\n")
+	log.Debugf("Fetch OK: %s\n", utils.B58encode(messageID[:]))
 	if ms.Stat {
 		stat.Input <- stat.Fetch
 	}

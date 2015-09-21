@@ -88,7 +88,7 @@ func (ms MessageServer) ProcessPost(postdata io.ReadCloser, oneTime bool, expire
 		log.Debugf("Post:MessageDB: %s\n", err)
 		return fmt.Sprintf("ERROR: %s\n", err)
 	}
-	log.Debugf("Post:Added: %x\n", MessageID[:12])
+	log.Debugf("Post:Added: %s\n", utils.B58encode(MessageID[:]))
 	if ms.Stat {
 		stat.Input <- stat.Post
 	}

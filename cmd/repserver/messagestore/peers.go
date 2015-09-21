@@ -3,6 +3,7 @@ package messagestore
 import (
 	"github.com/agl/ed25519"
 	log "github.com/repbin/repbin/deferconsole"
+	"github.com/repbin/repbin/utils"
 	"github.com/repbin/repbin/utils/keyproof"
 	"github.com/repbin/repbin/utils/repproto/structs"
 )
@@ -11,7 +12,7 @@ import (
 func (store Store) TouchPeer(pubkey *[ed25519.PublicKeySize]byte) {
 	err := store.db.TouchPeer(pubkey)
 	if err != nil {
-		log.Errorf("TouchPeer: %s, %x\n", err, *pubkey)
+		log.Errorf("TouchPeer: %s, %s\n", err, utils.B58encode(pubkey[:]))
 	}
 }
 
@@ -19,7 +20,7 @@ func (store Store) TouchPeer(pubkey *[ed25519.PublicKeySize]byte) {
 func (store Store) UpdatePeerFetchStat(pubkey *[ed25519.PublicKeySize]byte, lastFetch, lastPos, lastErrors uint64) {
 	err := store.db.UpdatePeerStats(pubkey, lastFetch, lastPos, lastErrors)
 	if err != nil {
-		log.Errorf("UpdatePeerStats: %s, %x\n", err, *pubkey)
+		log.Errorf("UpdatePeerStats: %s, %s\n", err, utils.B58encode(pubkey[:]))
 	}
 }
 
@@ -27,7 +28,7 @@ func (store Store) UpdatePeerFetchStat(pubkey *[ed25519.PublicKeySize]byte, last
 func (store Store) UpdatePeerNotification(pubkey *[ed25519.PublicKeySize]byte, hasError bool) {
 	err := store.db.UpdatePeerNotification(pubkey, hasError)
 	if err != nil {
-		log.Errorf("UpdatePeerNotification: %s, %x\n", err, *pubkey)
+		log.Errorf("UpdatePeerNotification: %s, %s\n", err, utils.B58encode(pubkey[:]))
 	}
 }
 
@@ -35,7 +36,7 @@ func (store Store) UpdatePeerNotification(pubkey *[ed25519.PublicKeySize]byte, h
 func (store Store) GetPeerStat(pubkey *[ed25519.PublicKeySize]byte) *structs.PeerStruct {
 	st, err := store.db.SelectPeer(pubkey)
 	if err != nil {
-		log.Errorf("GetPeerStat: %s, %x\n", err, *pubkey)
+		log.Errorf("GetPeerStat: %s, %s\n", err, utils.B58encode(pubkey[:]))
 		return nil
 	}
 	return st
@@ -45,6 +46,6 @@ func (store Store) GetPeerStat(pubkey *[ed25519.PublicKeySize]byte) *structs.Pee
 func (store Store) UpdatePeerAuthToken(senderPubKey *[ed25519.PublicKeySize]byte, signedToken *[keyproof.ProofTokenSignedSize]byte) {
 	err := store.db.UpdatePeerToken(senderPubKey, signedToken)
 	if err != nil {
-		log.Errorf("UpdatePeerAuthToken: %s, %x\n", err, *senderPubKey)
+		log.Errorf("UpdatePeerAuthToken: %s, %s\n", err, utils.B58encode(senderPubKey[:]))
 	}
 }
