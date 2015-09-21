@@ -158,7 +158,7 @@ func (ms MessageServer) notifyPeer(PubKey *[ed25519.PublicKeySize]byte, url stri
 		log.Debugf("Notify error: %s\n", err)
 		ms.DB.UpdatePeerNotification(PubKey, true)
 	} else {
-		log.Debugf("Notified peer: %x\n", *PubKey)
+		log.Debugf("Notified peer: %s\n", url)
 		ms.DB.UpdatePeerNotification(PubKey, false)
 	}
 }
@@ -174,18 +174,23 @@ func (ms MessageServer) FetchPeers() {
 	}
 }
 
+// format formats the given time t to RFC3339 format (in UTC).
+func format(t uint64) string {
+	return time.Unix(int64(t), 0).UTC().Format(time.RFC3339)
+}
+
 // fetchPeer downloads new messages from peer.
 func (ms MessageServer) fetchPeer(PubKey *[ed25519.PublicKeySize]byte, url string) {
 	// Get token, lastpos from database
 	var doUpdate bool
-	log.Debugf("fetch from peer: %x\n", *PubKey)
+	log.Debugf("fetch from peer: %s\n", url)
 	peerStat := ms.DB.GetPeerStat(PubKey)
 	if peerStat == nil { // Errors are ignored
-		log.Debugf("fetch from peer: not found %x\n", *PubKey)
+		log.Debugf("fetch from peer: not found %s\n", url)
 		return
 	}
 	if peerStat.LastNotifyFrom == 0 { // We never heard from him
-		log.Debugf("fetch from peer: no notification %x\n", *PubKey)
+		log.Debugf("fetch from peer: no notification %s\n", url)
 		return
 	}
 	startDate := CurrentTime()
@@ -193,14 +198,14 @@ func (ms MessageServer) fetchPeer(PubKey *[ed25519.PublicKeySize]byte, url strin
 	if ms.HubOnly {
 		// Pre-Emptive fetch in hub-mode: every 4 times FetchDuration or when notified
 		if peerStat.LastFetch != 0 && !(peerStat.LastFetch < peerStat.LastNotifyFrom || peerStat.LastFetch < uint64(startDate-(ms.FetchDuration*4))) {
-			log.Debugf("fetch from peer: no fetch-force and no notifications since last fetch %x\n", *PubKey)
-			log.Debugf("LastFetch: %d  LastNotifyFrom: %d\n", peerStat.LastFetch, peerStat.LastNotifyFrom)
+			log.Debugf("fetch from peer: no fetch-force and no notifications since last fetch %s\n", url)
+			log.Debugf("LastFetch: %s  LastNotifyFrom: %s\n", format(peerStat.LastFetch), format(peerStat.LastNotifyFrom))
 			return // nothing new to gain
 		}
 	} else {
 		if peerStat.LastFetch > peerStat.LastNotifyFrom && peerStat.LastFetch != 0 {
-			log.Debugf("fetch from peer: no notifications since last fetch %x\n", *PubKey)
-			log.Debugf("LastFetch: %d  LastNotifyFrom: %d\n", peerStat.LastFetch, peerStat.LastNotifyFrom)
+			log.Debugf("fetch from peer: no notifications since last fetch %s\n", url)
+			log.Debugf("LastFetch: %s  LastNotifyFrom: %s\n", format(peerStat.LastFetch), format(peerStat.LastNotifyFrom))
 			return // nothing new to gain
 		}
 	}
@@ -208,7 +213,7 @@ func (ms MessageServer) fetchPeer(PubKey *[ed25519.PublicKeySize]byte, url strin
 	maxSleep := ms.NotifyDuration - int64(timeout)
 	if maxSleep > 0 {
 		sleeptime := rand.Int63() % maxSleep
-		log.Debugf("fetch from peer: sleeping %d %x\n", sleeptime, *PubKey)
+		log.Debugf("fetch from peer: sleeping %d %s\n", sleeptime, url)
 		time.Sleep(time.Duration(sleeptime) * time.Second)
 	}
 	doUpdate = true
@@ -246,14 +251,14 @@ FetchLoop:
 			// Check if message exists
 			if ms.DB.MessageExists(msg.MessageID) {
 				peerStat.LastPosition = msg.Counter
-				log.Debugf("fetch from peer: exists %x %x\n", msg.MessageID, *PubKey)
+				log.Debugf("fetch from peer: exists %s %s\n", utils.B58encode(msg.MessageID[:]), url)
 				continue MessageLoop // Message exists.
 			}
 			// Add message
 			err := ms.FetchPost(url, authtoken, msg.MessageID, msg.ExpireTime)
 			if err == nil || err == messagestore.ErrDuplicate {
 				// Reduce fetch.ErrorCount when downloads are successful
-				log.Debugf("fetch from peer: exists now %x %x\n", msg.MessageID, *PubKey)
+				log.Debugf("fetch from peer: exists now %s %s\n", utils.B58encode(msg.MessageID[:]), url)
 				if peerStat.ErrorCount >= 2 {
 					peerStat.ErrorCount -= 2
 				}
@@ -264,7 +269,7 @@ FetchLoop:
 				// LastPosition will only advance if future downloads work
 				continue MessageLoop
 			}
-			log.Debugf("fetch from peer: added %x %x\n", msg.MessageID, *PubKey)
+			log.Debugf("fetch from peer: added %s %s\n", utils.B58encode(msg.MessageID[:]), url)
 			peerStat.LastPosition = msg.Counter
 			ms.notifyChan <- true
 		}
@@ -278,7 +283,7 @@ FetchLoop:
 		}
 	}
 	// Write peer update
-	log.Debugf("fetch from peer: cycle done %x\n", *PubKey)
+	log.Debugf("fetch from peer: cycle done %s\n", url)
 	if doUpdate {
 		ms.DB.UpdatePeerFetchStat(PubKey, uint64(CurrentTime()), peerStat.LastPosition, peerStat.ErrorCount)
 	} else {

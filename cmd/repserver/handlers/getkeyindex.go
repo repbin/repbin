@@ -96,7 +96,7 @@ func (ms MessageServer) GetKeyIndex(w http.ResponseWriter, r *http.Request) {
 	messages, found, err := ms.DB.GetIndex(pubKey, start, count)
 	if err != nil && err != ErrNoMore {
 		log.Debugf("List:GetIndex: %s\n", err)
-		log.Debugf("List:GetIndex: Key %x\n", pubKey)
+		log.Debugf("List:GetIndex: Key %s\n", utils.B58encode(pubKey[:]))
 		io.WriteString(w, "ERROR: List failed\n")
 		return
 	}
