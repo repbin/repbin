@@ -1,6 +1,6 @@
 // repmbox handles repbin mailboxes.
 //
-// Release 20150607.
+// Release 20150921.
 // You can reach me with
 // repclient --recipientPubKey 7VW3oPLzQc7VS2anLyDtrdARDdSwa7QTF7h3N2t6J2VN_DTshmJFEDa7XM2w9nHBq4CgtvK4kYdBp8G3wFPkYcGd1
 // Don't forget to put your own key into your message! (create with repmbox -add)
@@ -145,7 +145,7 @@ func (cfg *config) addSender(addSender, configFile string) error {
 	return nil
 }
 
-func (cfg *config) getList() ([]string, bool, error) {
+func (cfg *config) getList() (list []string, last int, more bool, err error) {
 	cmd := exec.Command("repclient",
 		"--index",
 		"--server", cfg.Server,
@@ -161,15 +161,13 @@ func (cfg *config) getList() ([]string, bool, error) {
 		for _, line := range lines {
 			if line == "FATAL: List error: listparse: No entries in list" {
 				// return empty list
-				return nil, false, nil
+				return nil, 0, false, nil
 			}
 		}
 		// show and return error
 		fmt.Print(out.String())
-		return nil, false, err
+		return nil, 0, false, err
 	}
-	var list []string
-	var more bool
 	lines := strings.Split(out.String(), "\n")
 	for _, line := range lines {
 		parts := strings.Split(line, "\t")
@@ -177,9 +175,14 @@ func (cfg *config) getList() ([]string, bool, error) {
 			if parts[0] == "STATUS (MessageList):" {
 				particles := strings.Split(parts[1], " ")
 				if len(particles) >= 2 {
+					// parse index
+					last, err = strconv.Atoi(particles[0])
+					if err != nil {
+						return nil, 0, false, fmt.Errorf("could not parse index on line: %s", line)
+					}
 					list = append(list, particles[1])
 				} else {
-					return nil, false, fmt.Errorf("could not parse line: %s", line)
+					return nil, 0, false, fmt.Errorf("could not parse line: %s", line)
 				}
 			} else if parts[0] == "STATUS (ListResult):" {
 				particles := strings.Split(parts[1], " ")
@@ -187,14 +190,14 @@ func (cfg *config) getList() ([]string, bool, error) {
 					var err error
 					more, err = strconv.ParseBool(particles[2])
 					if err != nil {
-						return nil, false, err
+						return nil, 0, false, err
 					}
 					break
 				}
 			}
 		}
 	}
-	return list, more, nil
+	return
 }
 
 func (cfg *config) getSenderKeys() map[string]senderKey {
@@ -309,12 +312,13 @@ func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, show, 
 	more := true
 	for more {
 		var list []string
+		var last int
 		var err error
 		// get list
 		if verbose {
 			fmt.Printf("download new messages starting at #%d\n", cfg.Start)
 		}
-		list, more, err = cfg.getList()
+		list, last, more, err = cfg.getList()
 		if err != nil {
 			return err
 		}
@@ -328,8 +332,8 @@ func (cfg *config) downloadNewMessages(outdir, stmdir, configFile string, show, 
 		if err := cfg.getMessages(list, outdir, stmdir, show, verbose); err != nil {
 			return err
 		}
-		// increase start
-		cfg.Start += len(list)
+		// set start
+		cfg.Start = last
 		if err := cfg.save(configFile); err != nil {
 			return err
 		}
