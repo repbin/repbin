@@ -37,7 +37,7 @@ func (ms MessageServer) notifyWatch() {
 			ms.FetchRun()
 		case <-expireTick:
 			log.Debugs("Expire run started.\n")
-			ms.DB.ExpireFromIndex(2) // we go back at most 2 cycles
+			ms.DB.ExpireFromIndex()
 		case <-statTick:
 			stat.Input <- stat.Show
 		case <-ms.notifyChan:
