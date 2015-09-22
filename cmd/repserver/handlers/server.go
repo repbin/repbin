@@ -18,7 +18,7 @@ import (
 )
 
 // Version of this release
-const Version = "0.0.2 very alpha"
+const Version = "0.0.3 very alpha"
 
 const (
 	// MaxPostSize maximum size for posts
