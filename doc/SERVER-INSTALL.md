@@ -99,6 +99,10 @@ You can change the peers.config file while the server is running. It will be
 reloaded automatically. Errors in the format of the file will lead to peering
 becoming unavailable until a well-formatted file is reloaded again.
 
+See [doc/DESIGN.md](https://github.com/repbin/repbin/blob/master/doc/DESIGN.md#peering)
+for more details on peering.
+
+
 
 ## Security
 

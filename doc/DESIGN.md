@@ -161,3 +161,31 @@ For a repost message, the Data section looks like this:
 Key generation and all cryptographic operations can be observed by calling the
 client with the `--KEYVERB` parameter. This will print the private and temporary
 keys to stderr.
+
+
+## Peering
+
+* For a successful peering of two servers **both** peers must have the public
+  peering key and URL of the other one in their `peers.config` file.
+  One-way peerings are not possible.
+
+* The Repbin network doesn't have a predefined or necessary network
+  architecture. The more peers a node has, the better.
+
+* Repbin nodes notify their peers after a while when they received new
+  messages. Such a _notification run_ just informs the peers that the contacting
+  node received new messages, but it doesn't send the message IDs or messages
+  themselves.
+
+* In regular intervals each node performs a _fetch run_ where it requests a
+  message ID list from all the peers it got notifications from. It compares the
+  message IDs on the list with its own list of known IDs and then downloads
+  unknown messages from the corresponding peer and adds them to its own
+  database.
+
+* That is, the peering mechanism in Repbin is a _flooding algorithm_ which
+  propagates new messages throughout the network.
+
+* Each node decides for itself how long it keeps new messages and in which
+  intervals it performs the notification and fetch runs (based on configuration
+  settings).
