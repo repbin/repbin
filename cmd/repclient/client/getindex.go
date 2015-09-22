@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	log "github.com/repbin/repbin/deferconsole"
 	"github.com/repbin/repbin/message"
@@ -20,8 +21,12 @@ func CmdIndex() int {
 	var messages []*structs.MessageStruct
 	var moreMessages bool
 	if OptionsVar.Server == "" {
-		getPeers(false)
+		// getPeers(false). Meaningless for index calls
+		log.Fatal("--index requires --server to be specified.\n")
+		return 1
 	}
+	server = OptionsVar.Server
+
 	if OptionsVar.Outdir != "" && !isDir(OptionsVar.Outdir) {
 		log.Fatalf("outdir does not exist or is no directory: %s", OptionsVar.Outdir)
 		return 1
@@ -33,23 +38,23 @@ func CmdIndex() int {
 		log.Fatal("Private key missing: --privkey\n")
 		return 1
 	}
+	// Test if long key is given, if yes, use only first part
+	if pos := strings.Index(privkeystr, "_"); pos > 0 {
+		privkeystr = privkeystr[:pos]
+	}
 	privT := utils.B58decode(privkeystr)
 	copy(privkey[:], privT)
 	pubkey = message.CalcPub(&privkey)
-	if OptionsVar.Server != "" {
-		server = OptionsVar.Server
-	}
 
 	proto := repproto.New(OptionsVar.Socksserver, OptionsVar.Server)
+	// If we want to change to using the server list instead. Not a great idea
+	// proto := repproto.New(OptionsVar.Socksserver, OptionsVar.Server, GlobalConfigVar.PasteServers...)
+	// re-enable if we want to use the server list: server, messages, moreMessages, err = proto.List(pubkey[:], privkey[:], OptionsVar.Start, OptionsVar.Count)
+
 	log.Dataf("STATUS (Process):\tLIST\n")
 
-	if server != "" {
-		fmt.Println("Specific server")
-		messages, moreMessages, err = proto.ListSpecific(server, pubkey[:], privkey[:], OptionsVar.Start, OptionsVar.Count)
-	} else {
-		fmt.Println("Any server")
-		server, messages, moreMessages, err = proto.List(pubkey[:], privkey[:], OptionsVar.Start, OptionsVar.Count)
-	}
+	messages, moreMessages, err = proto.ListSpecific(server, pubkey[:], privkey[:], OptionsVar.Start, OptionsVar.Count)
+
 	if err != nil {
 		log.Fatalf("List error: %s\n", err)
 		return 1
