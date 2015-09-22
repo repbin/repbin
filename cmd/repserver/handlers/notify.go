@@ -37,7 +37,8 @@ func (ms MessageServer) GetNotify(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			// verify that we know the peer
-			if !ms.PeerKnown(senderPubKey) {
+			url := ms.PeerURL(senderPubKey)
+			if url == "" {
 				io.WriteString(w, "ERROR: Bad peer\n")
 				log.Errorf("Notify, bad peer: %s\n", utils.B58encode(senderPubKey[:]))
 				return
@@ -46,7 +47,7 @@ func (ms MessageServer) GetNotify(w http.ResponseWriter, r *http.Request) {
 			// Test too old, too young
 			if enforceTimeOuts && (now > timeStamp+DefaultAuthTokenAge+ms.MaxTimeSkew || now < timeStamp-DefaultAuthTokenAge-ms.MaxTimeSkew) {
 				io.WriteString(w, "ERROR: Authentication expired\n")
-				log.Errorf("VerifyProofToken replay by %s\n", utils.B58encode(senderPubKey[:]))
+				log.Errorf("VerifyProofToken replay by %s\n", url)
 				return
 			}
 			ok, signedToken := keyproof.CounterSignToken(&proof, ms.TokenPubKey, ms.TokenPrivKey)
@@ -55,7 +56,7 @@ func (ms MessageServer) GetNotify(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			ms.DB.UpdatePeerAuthToken(senderPubKey, signedToken)
-			log.Debugf("Notified by %s\n", utils.B58encode(senderPubKey[:]))
+			log.Debugf("Notified by %s\n", url)
 			io.WriteString(w, "SUCCESS: Notified\n")
 			return
 		}
