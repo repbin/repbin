@@ -34,7 +34,7 @@ is marked as "hidden", access to the Post-Box requires authentication. This
 authentication is done by a proof-of-knowledge for the private key of the
 recipient public key. The cryptography for that protocol is implemented in
 utils/keyauth. The client first needs to fetch time-dependent curve25519 public
-key from the repserver. It then calculates a diffie-hellman shared secret
+key from the repserver. It then calculates a Diffie-Hellman shared secret
 between the repserver key and his private key. The shared secret is then hashed
 with SHA256. When accessing the post-box, the has of the shared secret is
 verified by the repserver and on success, access is granted. Please be aware
