@@ -296,7 +296,8 @@ Post/Get message:
 
 Post-Box support:
   -index           List Post-Box index
-  -privkey         Private key of post-box. Required
+  -server <URL>    Use repserver at URL. Required for index calls
+  -privkey         Private key of post-box
   -start <NUMBER>  Start at index NUMBER
   -count <NUMBER>  Return at most NUMBER posts
   -outdir <DIR>    Download messages to DIR
