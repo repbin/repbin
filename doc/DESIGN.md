@@ -34,7 +34,7 @@ is marked as "hidden", access to the Post-Box requires authentication. This
 authentication is done by a proof-of-knowledge for the private key of the
 recipient public key. The cryptography for that protocol is implemented in
 utils/keyauth. The client first needs to fetch time-dependent curve25519 public
-key from the repserver. It then calculates a diffie-hellman shared secret
+key from the repserver. It then calculates a Diffie-Hellman shared secret
 between the repserver key and his private key. The shared secret is then hashed
 with SHA256. When accessing the post-box, the has of the shared secret is
 verified by the repserver and on success, access is granted. Please be aware
@@ -146,7 +146,7 @@ padding has been generated. A special case exists for repost messages.
 
 Repost messages contain other messages with the DeterministicPadding removed
 (but all other fields present). On repost, the PaddingKey is read from the body
-to generate the DeterministicPadding and insert it into the embeded message. The
+to generate the DeterministicPadding and insert it into the embedded message. The
 embedded message is then posted honoring the MinDelay and MaxDelay settings.
 For a repost message, the Data section looks like this:
 
@@ -161,3 +161,31 @@ For a repost message, the Data section looks like this:
 Key generation and all cryptographic operations can be observed by calling the
 client with the `--KEYVERB` parameter. This will print the private and temporary
 keys to stderr.
+
+
+## Peering
+
+* For a successful peering of two servers **both** peers must have the public
+  peering key and URL of the other one in their `peers.config` file.
+  One-way peerings are not possible.
+
+* The Repbin network doesn't have a predefined or necessary network
+  architecture. The more peers a node has, the better.
+
+* Repbin nodes notify their peers after a while when they received new
+  messages. Such a _notification run_ just informs the peers that the contacting
+  node received new messages, but it doesn't send the message IDs or messages
+  themselves.
+
+* In regular intervals each node performs a _fetch run_ where it requests a
+  message ID list from all the peers it got notifications from. It compares the
+  message IDs on the list with its own list of known IDs and then downloads
+  unknown messages from the corresponding peer and adds them to its own
+  database.
+
+* That is, the peering mechanism in Repbin is a _flooding algorithm_ which
+  propagates new messages throughout the network.
+
+* Each node decides for itself how long it keeps new messages and in which
+  intervals it performs the notification and fetch runs (based on configuration
+  settings).
