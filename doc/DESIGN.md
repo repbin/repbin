@@ -146,7 +146,7 @@ padding has been generated. A special case exists for repost messages.
 
 Repost messages contain other messages with the DeterministicPadding removed
 (but all other fields present). On repost, the PaddingKey is read from the body
-to generate the DeterministicPadding and insert it into the embeded message. The
+to generate the DeterministicPadding and insert it into the embedded message. The
 embedded message is then posted honoring the MinDelay and MaxDelay settings.
 For a repost message, the Data section looks like this:
 
