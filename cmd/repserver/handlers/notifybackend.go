@@ -122,12 +122,15 @@ func (ms MessageServer) getPeerURLs() []string {
 	return ret
 }
 
-// PeerKnown tests if a peer is known.
-func (ms MessageServer) PeerKnown(PubKey *[ed25519.PublicKeySize]byte) bool {
+// PeerURL tests if a peer is known. If it is known, it returns its URL and "" otherwise.
+func (ms MessageServer) PeerURL(PubKey *[ed25519.PublicKeySize]byte) string {
 	systemPeersMutex.Lock()
 	defer systemPeersMutex.Unlock()
-	_, ok := systemPeers[*PubKey]
-	return ok
+	peer, ok := systemPeers[*PubKey]
+	if !ok {
+		return ""
+	}
+	return peer.URL
 }
 
 // NotifyPeers runs notification for all peers.
