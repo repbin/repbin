@@ -5,7 +5,7 @@ import (
 )
 
 // Version of client functions
-const Version = "0.0.1 very alpha"
+const Version = "0.0.2 very alpha"
 
 // PeerUPdateDuration is the maximum time to wait until peer updates are forced
 const PeerUpdateDuration = 259200
