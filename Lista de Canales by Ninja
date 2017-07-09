@@ -1,0 +1,182 @@
+#EXTM3U
+
+#EXTINF:0,Cαηαlєѕ ρєяυαησѕ HD:
+https://www.youtube.com/watch?v=CPDGk1TbSEs
+
+#EXTINF:0,Latina Televisión
+https://live3.userapi.com/639913/live/ySZn-LhAf6SouRQy/playlist.m3u8
+
+#EXTINF:0,Gol Perú
+http://62.212.82.87:8088/stream/cmdgol/playlist.m3u8?id=6766&wowzasessionid=7811268966&pk=766f71ce5094686841a0a3235fb9404185dc9a1d3482498490f54c0552fb5e89
+
+#EXTINF:0,América Televisión
+https://live11.userapi.com/613500/live/yDl4-SlAfzUynDIO/playlist.m3u8
+
+#EXTINF:0,Panamericana Televisión
+http://cdnh15.iblups.com/hls/ptv.m3u8
+
+#EXTINF:0,TV Perú HD
+http://cdnh15.iblups.com/hls/R9WtilpKKB.m3u8
+
+#EXTINF:0,TV Perú 7.3
+http://cdnh15.iblups.com/hls/RMuwrdk7M9.m3u8
+
+#EXTINF:0,IPE TV
+http://cdnh4.iblups.com/hls/irtp.m3u8
+
+#EXTINF:0,Willax Television
+http://movil.mediastream.pe/vv_willax/livestream/playlist.m3u8?wowzasessionid=996342462
+
+#EXTINF:0,Monterrico Televisión
+http://vs8.live.opencaster.com/20100152275/jcpstream/playlist.m3u8
+
+#EXTINF:0,TOP LATINO TV
+http://online.radiodifusion.net:1935/livetv/latinoSD.stream/chunklist.m3u8
+
+#EXTINF:0,Cαηαlєѕ dє dєρσятєѕ:
+http://stream.latino-webtv.com/series/gravityfalls.mp4
+
+#EXTINF:0,Fox Sports 1
+http://rtve-live.hds.adaptive.level3.net/hls-live/rtvegl0-la2lv3aomgl0/_definst_/live/stream3.m3u8
+
+#EXTINF:0,Fox Sports 2
+https://live96.vkuserlive.com/639901/live/CEgJOXJAf279xd8a/playlist.m3u8
+
+#EXTINF:0,ESPN 1
+https://live10.userapi.com/637601/live/1gJD5yNAfz8Y-Icl/playlist.m3u8
+
+#EXTINF:0,ESPN 2
+https://live62.vkuserlive.com/637605/live/1kYH5yNAfz-wm4Yz/playlist.m3u8
+
+#EXTINF:0,Directv Sports
+https://live68.vkuserlive.com/639912/live/0xhZ4rlAf6VQnzQE/playlist.m3u8
+
+#EXTINF:0,Cαηαlєѕ Dє Cυlтυяα:
+
+#EXTINF:0,Animal Planet
+http://iphone-streaming.ustream.tv/uhls/12762028/streams/live/iphone/playlist.m3u8
+
+#EXTINF:0,Discovery Civilization
+http://wowza2.mysoltv.com:1992/Latino_Discovery_Civilization/tracks-v1a1/index.m3u8 
+
+#EXTINF:0,Discovery Channel
+http://209.126.116.177:2086/402discoverychannel/android/chunk_Auth=ix08xZ%5E@6Qg7xc=1/playlist.m3u8
+
+#EXTINF:0,Theater
+http://system.fpiptv.com:8080/live/12345/12345/509.ts
+
+#EXTINF:0,Discovery Crimen e Investigación
+http://edge6.telesport.pw/live/canalcrimen/index.m3u8 
+
+#EXTINF:0,Discovery TLC
+http://wowza2.mysoltv.com:1992/Latino_TLC/tracks-v1a1/index.m3u8 
+
+#EXTINF:0,Historia
+https://live2.userapi.com/639900/live/uK7viRRAfwjhsWQw/playlist.m3u8
+
+#EXTINF:0,Discovery 
+http://cdn2.shurs.xyz/verdirectotv/11/playlist.m3u8
+
+#EXTINF:0,National geographic
+http://edge3.telesport.pw/live/nationalgeo/index.m3u8
+
+#EXTINF:0,Nat Geo Wild
+http://edge7.telesport.pw/live/nationalwild/index.m3u8
+
+#EXTINF:0,Cαηαlєѕ Dє Eηтяєтєηιмιєηтσ:
+
+#EXTINF:0,AMC
+http://wowza2.mysoltv.com:1992/Latino_AMC/index.m3u8
+
+#EXTINF:0,AXN
+http://edge4.telesport.pw/live/axn/index.m3u8
+
+#EXTINF:0,Comedy Central
+http://cdn2.shurs.xyz/verdirectotv/8/playlist.m3u8
+
+#EXTINF:0,Cinecanal
+http://streaming.wirenetserver.com.ar:1935/canal4/live_1/playlist.m3u8
+
+#EXTINF:0,Cinemax
+http://cdn2.shurs.xyz/verliga/4/playlist.m3u8
+
+#EXTINF:0,Fx
+http://wowza2.mysoltv.com:1992/Latino_FX/index.m3u8
+
+#EXTINF:0,Fox
+http://209.126.116.177:2086/202CanalFOXMexico/android/chunk_Auth=ix08xZ%5E@6Qg7xc=1/chunks.m3u8?nimblesessionid=1146399
+
+#EXTINF:0,Fox Series
+http://wowza2.mysoltv.com:1992/Latino_Fox_1_HD/index.m3u8
+
+#EXTINF:0,Fox Cinema
+http://wowza2.mysoltv.com:1992/Latino_Fox_Cinema_HD/index.m3u8
+
+#EXTINF:0,Fox Action	
+http://wowza2.mysoltv.com:1992/Latino_Fox_Action_HD/index.m3u8
+
+#EXTINF:0,Fox life
+http://wowza2.mysoltv.com:1992/Latino_FOX_LIFE/index.m3u8
+
+#EXTINF:0,TNT
+http://cdn1.shurs.xyz/verliga/7/chunks.m3u8?nimblesessionid=38514239
+
+#EXTINF:0,TNT Series
+http://edge1.telesport.pw/live/tnt/index.m3u8
+
+#EXTINF:0,Canal Sony
+http://wowza2.mysoltv.com:1992/Latino_SONY/index.m3u8
+
+#EXTINF:0,TLC
+http://wowza2.mysoltv.com:1992/Latino_TLC/index.m3u8
+
+#EXTINF:0,Cαηαlєѕ ιηfαηтιlєѕ:
+https://live73.vkuserlive.com/620010/live/tyBhhhhAfwQQ2EMh/playlist.m3u8
+
+#EXTINF:0,Disney Channel HD
+https://live95.vkuserlive.com/639912/live/1s2M52NAf3_NPwA6/playlist.m3u8
+
+#EXTINF:0,Cartoon Network
+http://theplayersklub.host:2095/live/husham/isaplayer/1123.ts
+
+#EXTINF:0,Disney xD
+http://209.126.116.177:2086/304DisneyXDNorte/android/chunk_Auth=ix08xZ%5E@6Qg7xc=1/chunks.m3u8?nimblesessionid=1144425
+
+#EXTINF:0,Discovery Kids
+http://wowza2.mysoltv.com:1992/Latino_Claro_Sports/index.m3u8
+
+#EXTINF:0,Nick
+http://209.126.116.177:2086/305nickelodeon/android/chunk_Auth=ix08xZ%5E@6Qg7xc=1/chunks.m3u8?nimblesessionid=1144762
+
+#EXTINF:0,Tooncast
+http://wowza2.mysoltv.com:1992/Latino_Cinecanal_HD/tracks-v1a1/index.m3u8
+
+
+
+
+
+#EXTINF:0,Warner
+http://wowza2.mysoltv.com:1992/Latino_Warner_HD/in-vdex.m3u8
+
+
+
+#EXTINF:0,Universal Channel
+http://system.fpiptv.com:8080/live/12345/12345/549.ts
+
+
+#EXTINF:0,Syfy
+http://wowza2.mysoltv.com:1992/Latino_Syfy_HD/index.m3u8
+
+#EXTINF:0,Investigation Discovery
+http://system.fpiptv.com:8080/live/12345/12345/553.ts
+
+
+
+#EXTINF:0,Cinemax
+http://wowza2.mysoltv.com:1992/Latino_CINEMAX/index.m3u8
+
+#EXTINF:0,Natgeo
+http://209.126.116.177:2086/405Natgeo/android/chunk_Auth=ix08xZ%5E@6Qg7xc=1/chunks.m3u8?nimblesessionid=1148469
+
+#EXTINF:0,I Sat
+http://wowza2.mysoltv.com:1992/Latino_I_SAT/index.m3u8
